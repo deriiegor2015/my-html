@@ -264,10 +264,12 @@
             }
 
         } catch (error) {
-            removeTypingIndicator(typingId);
-            appendMessage("Помилка з'єднання з сервером.", 'ai');
-        }
-    }
+    removeTypingIndicator(typingId);
+    // Виводимо точний текст помилки
+    appendMessage(`Деталі помилки: ${error.message}`, 'ai');
+    console.error(error);
+}
+
 
     function appendMessage(text, sender) {
         const msgDiv = document.createElement('div');
