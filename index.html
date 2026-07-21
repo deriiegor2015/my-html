@@ -260,10 +260,25 @@
             } else if (data.error) {
                 appendMessage(`Помилка: ${data.error.message}`, 'ai');
             } else {
-                appendMessage("Сталася невідома помилка при отриманні відповіді.", 'ai');
-            }
+                appendMessage("Сталася невідома помилка при отриманні відповіді.", 
+        const data = await response.json();
+        removeTypingIndicator(typingId);
 
-        } catch (error) {
+        if (data.choices && data.choices[0].message) {
+            appendMessage(data.choices[0].message.content, 'ai');
+        } else if (data.error) {
+            appendMessage(`Помилка API: ${data.error.message}`, 'ai');
+        } else {
+            appendMessage("Не вдалося отримати відповідь.", 'ai');
+        }
+
+    } catch (error) {
+        removeTypingIndicator(typingId);
+        appendMessage(`Помилка мережі: ${error.message}`, 'ai');
+    }
+}
+
+         } catch (error) {
     removeTypingIndicator(typingId);
     // Виводимо точний текст помилки
     appendMessage(`Деталі помилки: ${error.message}`, 'ai');
