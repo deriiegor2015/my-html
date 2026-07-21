@@ -213,21 +213,34 @@
 </div>
 
 <script>
-import Groq from "groq-sdk";
-const groq = new Groq();
-async function main() {
-  const completion = await groq.chat.completions.create({
-    model: "groq/compound",
-    messages: [
-      {
-        role: "user",
-        content: "Explain why fast inference is critical for reasoning models",
-      },
-    ],
-  });
-  console.log(completion.choices[0]?.message?.content);
-}
-main().catch(console.error);
+async function sendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
+
+    appendMessage(text, 'user');
+    inputField.value = '';
+
+    const typingId = showTypingIndicator();
+
+    // Вставте сюди ваш ключ OpenAI (sk-proj-...)
+    const API_KEY = "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";
+
+    try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini", // Найдешевша та швидка модель
+                messages: [
+                    { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
+                    { role: "user", content: text }
+                ]
+            })
+        });
+
 
 
     function appendMessage(text, sender) {
