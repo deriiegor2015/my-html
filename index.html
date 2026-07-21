@@ -213,54 +213,35 @@
 </div>
 
 <script>
-    // Пов'язуємо змінні з елементами HTML
-    const inputField = document.getElementById('userInput');
-    const messagesContainer = document.getElementById('messages');
+            async function sendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
 
-    // Обробка натискання Enter у полі вводу
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    }
+    appendMessage(text, 'user');
+    inputField.value = '';
 
-    async function sendMessage() {
-        const text = inputField.value.trim();
-        if (!text) return;
+    const typingId = showTypingIndicator();
 
-        appendMessage(text, 'user');
-        inputField.value = '';
+    // Вставте сюди ваш API-ключ
+    const API_KEY = "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";
 
-        const typingId = showTypingIndicator();
+    try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
+                    { role: "user", content: text }
+                ]
+            })
+        });
 
-        // Вставте ваш API-ключ
-        const API_KEY = "sk-proj-...";
-
-        try {
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-4o-mini",
-                    messages: [
-                        { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
-                        { role: "user", content: text }
-                    ]
-                })
-            });
-
-            const data = await response.json();
-            removeTypingIndicator(typingId);
-
-            if (data.choices && data.choices[0].message) {
-                appendMessage(data.choices[0].message.content, 'ai');
-            } else if (data.error) {
-                appendMessage(`Помилка: ${data.error.message}`, 'ai');
-            } else {
-                appendMessage("Сталася невідома помилка при отриманні відповіді.", 
+        // --- ОСЬ ТЕ, ЩО МОГЛО ВИДАЛИТИСЯ ---
         const data = await response.json();
         removeTypingIndicator(typingId);
 
@@ -277,6 +258,7 @@
         appendMessage(`Помилка мережі: ${error.message}`, 'ai');
     }
 }
+
 
          } catch (error) {
     removeTypingIndicator(typingId);
