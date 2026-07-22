@@ -53,13 +53,20 @@
 
         .chat-header {
             padding: 20px;
-            text-align: center;
             background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
             justify-content: center;
             gap: 10px;
+            flex: 1;
         }
 
         .chat-header h1 {
@@ -84,6 +91,24 @@
             0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .clear-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 59, 48, 0.2);
+            border-color: rgb(255, 59, 48);
+            color: rgb(255, 100, 100);
         }
 
         .chat-messages {
@@ -198,14 +223,17 @@
 
 <div class="chat-container">
     <div class="chat-header">
-        <span class="status-dot"></span>
-        <h1>Nexus AI</h1>
+        <div class="header-content">
+            <span class="status-dot"></span>
+            <h1>Nexus AI</h1>
+        </div>
+        <button class="clear-btn" onclick="clearChat()" title="Очистити чат">🗑️ Очистити</button>
     </div>
     <div class="chat-messages" id="messages">
         <div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>
     </div>
     <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Запитай мене про щось..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" placeholder="Запитай мене про щось... (Enter для відправки)" onkeypress="handleKeyPress(event)">
         <button type="button" onclick="sendMessage()">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
         </button>
@@ -217,7 +245,8 @@
     const messagesContainer = document.getElementById('messages');
 
     function handleKeyPress(event) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
             sendMessage();
         }
     }
@@ -294,8 +323,26 @@
     }
 
     function scrollToBottom() {
+        // Уповільнює скрол для плавного ефекту
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // Додатково прокручує при надходженні довгих відповідей
+        setTimeout(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 100);
     }
+
+    function clearChat() {
+        if (confirm('Ви впевнені? Це видалить всю історію чату.')) {
+            messagesContainer.innerHTML = '<div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>';
+            inputField.value = '';
+            inputField.focus();
+        }
+    }
+
+    // Встановлює фокус на input при завантаженні сторінки
+    window.addEventListener('load', () => {
+        inputField.focus();
+    });
 </script>
 
 </body>
