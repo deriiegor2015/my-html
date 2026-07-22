@@ -213,60 +213,60 @@
 </div>
 
 <script>
-            async function sendMessage() {
-    const text = inputField.value.trim();
-    if (!text) return;
+    const inputField = document.getElementById('userInput');
+    const messagesContainer = document.getElementById('messages');
 
-    appendMessage(text, 'user');
-    inputField.value = '';
-
-    const typingId = showTypingIndicator();
-
-    // Вставте сюди ваш API-ключ
-    const API_KEY = "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";
-
-    try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${API_KEY}`
-            },
-            body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: [
-                    { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
-                    { role: "user", content: text }
-                ]
-            })
-        });
-
-        // --- ОСЬ ТЕ, ЩО МОГЛО ВИДАЛИТИСЯ ---
-        const data = await response.json();
-        removeTypingIndicator(typingId);
-
-        if (data.choices && data.choices[0].message) {
-            appendMessage(data.choices[0].message.content, 'ai');
-        } else if (data.error) {
-            appendMessage(`Помилка API: ${data.error.message}`, 'ai');
-        } else {
-            appendMessage("Не вдалося отримати відповідь.", 'ai');
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
         }
-
-    } catch (error) {
-        removeTypingIndicator(typingId);
-        appendMessage(`Помилка мережі: ${error.message}`, 'ai');
     }
-}
 
+    async function sendMessage() {
+        const text = inputField.value.trim();
+        if (!text) return;
 
-         } catch (error) {
-    removeTypingIndicator(typingId);
-    // Виводимо точний текст помилки
-    appendMessage(`Деталі помилки: ${error.message}`, 'ai');
-    console.error(error);
-}
+        appendMessage(text, 'user');
+        inputField.value = '';
 
+        const typingId = showTypingIndicator();
+
+        // Вставте сюди ваш API-ключ
+        const API_KEY = "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";
+
+        try {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
+                        { role: "user", content: text }
+                    ]
+                })
+            });
+
+            const data = await response.json();
+            removeTypingIndicator(typingId);
+
+            if (data.choices && data.choices[0].message) {
+                appendMessage(data.choices[0].message.content, 'ai');
+            } else if (data.error) {
+                appendMessage(`Помилка API: ${data.error.message}`, 'ai');
+            } else {
+                appendMessage("Не вдалося отримати відповідь.", 'ai');
+            }
+
+        } catch (error) {
+            removeTypingIndicator(typingId);
+            appendMessage(`Помилка мережі: ${error.message}`, 'ai');
+            console.error(error);
+        }
+    }
 
     function appendMessage(text, sender) {
         const msgDiv = document.createElement('div');
