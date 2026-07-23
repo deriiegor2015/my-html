@@ -29,6 +29,108 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Modal Setup */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h2 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .modal-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content input:focus {
+            border-color: rgb(99, 102, 241);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-content input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
+            color: white;
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Chat Container */
         .chat-container {
             width: 90%;
             max-width: 450px;
@@ -93,7 +195,12 @@
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        .clear-btn {
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
@@ -103,6 +210,11 @@
             font-size: 0.8rem;
             transition: all 0.3s ease;
             white-space: nowrap;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgb(99, 102, 241);
         }
 
         .clear-btn:hover {
@@ -169,7 +281,7 @@
             gap: 10px;
         }
 
-        input {
+        input.chat-input-field {
             flex: 1;
             padding: 12px 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -181,16 +293,16 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        input:focus {
+        input.chat-input-field:focus {
             border-color: rgb(99, 102, 241);
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
         }
 
-        input::placeholder {
+        input.chat-input-field::placeholder {
             color: rgba(255, 255, 255, 0.4);
         }
 
-        button {
+        button.send-btn {
             padding: 0 20px;
             border: none;
             background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
@@ -204,15 +316,15 @@
             justify-content: center;
         }
 
-        button:hover {
+        button.send-btn:hover {
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
         }
 
-        button:active {
+        button.send-btn:active {
             transform: scale(0.95);
         }
         
-        button svg {
+        button.send-btn svg {
             width: 18px;
             height: 18px;
             fill: white;
@@ -221,20 +333,39 @@
 </head>
 <body>
 
+<!-- Setup Modal -->
+<div id="setupModal" class="modal show">
+    <div class="modal-content">
+        <h2>🔑 Налаштування API</h2>
+        <p>Введіть ваш OpenRouter API-ключ для розпочати роботу з чатом</p>
+        <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
+        <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">
+            Отримати ключ: <a href="https://openrouter.ai" target="_blank" style="color: rgb(99, 102, 241); text-decoration: none;">openrouter.ai</a>
+        </p>
+        <div class="modal-buttons">
+            <button class="btn-save" onclick="saveApiKey()">Зберегти</button>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Container -->
 <div class="chat-container">
     <div class="chat-header">
         <div class="header-content">
             <span class="status-dot"></span>
             <h1>Nexus AI</h1>
         </div>
-        <button class="clear-btn" onclick="clearChat()" title="Очистити чат">🗑️ Очистити</button>
+        <div class="header-buttons">
+            <button class="header-btn" onclick="showSettings()" title="Налаштування">⚙️</button>
+            <button class="header-btn clear-btn" onclick="clearChat()" title="Очистити чат">🗑️</button>
+        </div>
     </div>
     <div class="chat-messages" id="messages">
         <div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>
     </div>
     <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Запитай мене про щось... (Enter для відправки)" onkeypress="handleKeyPress(event)">
-        <button type="button" onclick="sendMessage()">
+        <input type="text" id="userInput" class="chat-input-field" placeholder="Запитай мене про щось... (Enter для відправки)" onkeypress="handleKeyPress(event)">
+        <button type="button" class="send-btn" onclick="sendMessage()">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
         </button>
     </div>
@@ -243,6 +374,47 @@
 <script>
     const inputField = document.getElementById('userInput');
     const messagesContainer = document.getElementById('messages');
+    const setupModal = document.getElementById('setupModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+
+    // Завантаження API-ключа з localStorage
+    function loadApiKey() {
+        const savedKey = localStorage.getItem('openrouter_api_key');
+        if (savedKey) {
+            setupModal.classList.remove('show');
+            return savedKey;
+        }
+        return null;
+    }
+
+    // Збереження API-ключа
+    function saveApiKey() {
+        const key = apiKeyInput.value.trim();
+        if (!key) {
+            alert('Будь ласка, введіть API-ключ');
+            return;
+        }
+        if (!key.startsWith('sk-or-v1-')) {
+            alert('Невірний формат API-ключа. Він повинен починатися з sk-or-v1-');
+            return;
+        }
+        localStorage.setItem('openrouter_api_key', key);
+        setupModal.classList.remove('show');
+        inputField.focus();
+    }
+
+    // Показування налаштувань
+    function showSettings() {
+        apiKeyInput.value = localStorage.getItem('openrouter_api_key') || '';
+        setupModal.classList.add('show');
+    }
+
+    // Enter для збереження ключа
+    apiKeyInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            saveApiKey();
+        }
+    });
 
     function handleKeyPress(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -255,13 +427,16 @@
         const text = inputField.value.trim();
         if (!text) return;
 
+        const API_KEY = localStorage.getItem('openrouter_api_key');
+        if (!API_KEY) {
+            showSettings();
+            return;
+        }
+
         appendMessage(text, 'user');
         inputField.value = '';
 
         const typingId = showTypingIndicator();
-
-        // OpenRouter API-ключ
-        const API_KEY = "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";
 
         try {
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -323,9 +498,7 @@
     }
 
     function scrollToBottom() {
-        // Уповільнює скрол для плавного ефекту
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        // Додатково прокручує при надходженні довгих відповідей
         setTimeout(() => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }, 100);
@@ -339,9 +512,14 @@
         }
     }
 
-    // Встановлює фокус на input при завантаженні сторінки
+    // Ініціалізація при завантаженні
     window.addEventListener('load', () => {
-        inputField.focus();
+        if (!loadApiKey()) {
+            setupModal.classList.add('show');
+            apiKeyInput.focus();
+        } else {
+            inputField.focus();
+        }
     });
 </script>
 
