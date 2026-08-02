@@ -9,7 +9,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
@@ -29,7 +29,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Sidebar (Всі чати) */
+        /* Sidebar */
         .sidebar {
             position: fixed;
             left: -300px;
@@ -126,7 +126,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             padding: 30px;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
@@ -154,7 +154,18 @@
         }
 
         .btn-save { background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247)); color: white; }
-        .btn-cancel { background: rgba(255, 255, 255, 0.1); color: white; }
+        .btn-mfa { background: linear-gradient(135deg, rgb(34, 197, 94), rgb(16, 185, 129)); color: white; margin-top: 10px; width: 100%; }
+        .btn-cancel { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255,255,255,0.1); }
+
+        .forgot-link {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .forgot-link:hover { color: rgb(99, 102, 241); }
 
         /* Chat Container */
         .chat-container {
@@ -220,39 +231,83 @@
         button.send-btn svg { width: 18px; height: 18px; fill: white; }
 
         .account-badge {
-            font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; text-align: center; word-break: break-all;
+            font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; text-align: center;
         }
+
+        #recaptcha-container { margin: 10px 0; }
     </style>
 </head>
 <body>
 
-<!-- Sidebar & Overlay -->
 <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
+<!-- Sidebar -->
 <div id="sidebar" class="sidebar">
     <div class="sidebar-header">
         <h3>💬 Всі чати</h3>
         <button class="header-btn" onclick="toggleSidebar()">✕</button>
     </div>
     <div class="chat-list" id="chatList"></div>
-    <div class="account-badge" id="accountBadge">Локальний режим (На пристрої)</div>
+    <div class="account-badge" id="accountBadge">Локальний режим</div>
     <div style="margin-top: 15px; display: flex; gap: 5px;">
-        <button class="header-btn" style="flex:1" id="authBtn" onclick="openAuthModal()">👤 Акаунт</button>
+        <button class="header-btn" style="flex:1" id="sidebarAuthBtn" onclick="openAuthModal()">👤 Акаунт</button>
     </div>
 </div>
 
 <!-- Modal: Auth -->
 <div id="authModal" class="modal">
     <div class="modal-content">
-        <h2>☁️ Firebase Акаунт</h2>
-        <p>Увійдіть або зареєструйтесь для хмарної синхронізації</p>
+        <h2>☁️ Вхід / Реєстрація</h2>
+        <p>Увійдіть, щоб зберігати історію чатів у хмарі</p>
         <input type="email" id="authEmail" placeholder="Електронна пошта" />
         <input type="password" id="authPassword" placeholder="Пароль" />
         <div class="modal-buttons">
             <button class="btn-save" onclick="handleAuth('login')">Увійти</button>
             <button class="btn-cancel" onclick="handleAuth('register')">Реєстрація</button>
         </div>
-        <button class="btn-cancel" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">Закрити</button>
+        <span class="forgot-link" onclick="handleAuth('reset')">Забули пароль?</span>
+        <button class="btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeAuthModal()">Закрити</button>
+    </div>
+</div>
+
+<!-- Modal: Profile & 2FA -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <h2>👤 Налаштування профілю</h2>
+        <p id="profileUserEmail" style="word-break: break-all; font-weight: bold; color: rgb(99, 102, 241);"></p>
+        
+        <p style="margin-top: 15px; font-size: 0.85rem;">Змінити електронну пошту:</p>
+        <input type="email" id="newEmailInput" placeholder="Новий Email" />
+        <button class="btn-save" style="width: 100%; margin-bottom: 10px;" onclick="changeUserEmail()">Оновити Email</button>
+        
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;" />
+        
+        <p style="font-size: 0.85rem; font-weight: 600; color: #fff;">🔐 Двоетапна перевірка (2FA):</p>
+        <p id="mfaStatus" style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 10px;">2FA не підключено</p>
+        <button class="btn-mfa" onclick="openMfaModal()">🛡️ Налаштувати 2-Step Verification</button>
+
+        <div class="modal-buttons" style="margin-top: 20px;">
+            <button class="btn-cancel" style="background: rgba(255, 59, 48, 0.2); color: #ff6b6b;" onclick="userLogout()">Вийти з акаунта</button>
+            <button class="btn-cancel" onclick="closeProfileModal()">Закрити</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: MFA Setup -->
+<div id="mfaModal" class="modal">
+    <div class="modal-content">
+        <h2>📱 Підключення 2FA</h2>
+        <p>Введіть номер телефону для отримання коду підтвердження</p>
+        <input type="tel" id="mfaPhoneNumber" placeholder="+380XXXXXXXXX" />
+        <div id="recaptcha-container"></div>
+        <button class="btn-save" style="width: 100%;" onclick="sendMfaCode()">Надіслати код</button>
+        
+        <div id="mfaCodeSection" style="display: none; margin-top: 15px;">
+            <input type="text" id="mfaVerificationCode" placeholder="6-значний SMS код" />
+            <button class="btn-mfa" onclick="verifyMfaCode()">Підтвердити та увімкнути 2FA</button>
+        </div>
+
+        <button class="btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeMfaModal()">Скасувати</button>
     </div>
 </div>
 
@@ -279,6 +334,7 @@
         </div>
         <div class="header-buttons">
             <button class="header-btn" onclick="createNewChat()" title="Новий чат">➕</button>
+            <button class="header-btn" id="topAuthBtn" onclick="openAuthModal()" title="Акаунт">☁️ Вхід</button>
             <button class="header-btn" onclick="showSettings()" title="Налаштування">⚙️</button>
         </div>
     </div>
@@ -293,128 +349,235 @@
     </div>
 </div>
 
-<!-- Підключення Firebase (SDK v9 Modular) -->
+<!-- Firebase Script -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { 
-        getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+        getAuth, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        sendPasswordResetEmail,
+        verifyBeforeUpdateEmail,
+        signOut, 
+        onAuthStateChanged,
+        sendEmailVerification,
+        multiFactor,
+        PhoneAuthProvider,
+        PhoneMultiFactorGenerator,
+        RecaptchaVerifier
     } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { 
         getFirestore, doc, setDoc, getDoc 
     } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // 🔴 ВСТАВ СВОЇ ДАНІ З FIREBASE CONSOLE ТУТ:
     const firebaseConfig = {
-        apiKey: "ТВІЙ_FIREBASE_API_KEY",
-        authDomain: "ТВІЙ_PROJECT_ID.firebaseapp.com",
-        projectId: "ТВІЙ_PROJECT_ID",
-        storageBucket: "ТВІЙ_PROJECT_ID.appspot.com",
-        messagingSenderId: "ТВІЙ_SENDER_ID",
-        appId: "ТВІЙ_APP_ID"
+        authDomain: "nexus-ai-3e33c.firebaseapp.com",
+        projectId: "nexus-ai-3e33c",
+        storageBucket: "nexus-ai-3e33c.appspot.com",
+        messagingSenderId: "303977287313"
     };
 
-    // Ініціалізація Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let currentUser = null;
+    window.currentUser = null;
+    let mfaVerificationId = null;
 
-    // Відстеження стану авторизації
     onAuthStateChanged(auth, async (user) => {
-        currentUser = user;
-        updateAccountUI();
+        window.currentUser = user;
+        const topAuthBtn = document.getElementById('topAuthBtn');
+        const badge = document.getElementById('accountBadge');
+        
         if (user) {
-            // Завантажуємо дані з хмари Firestore
+            topAuthBtn.textContent = '👤 Профіль';
+            topAuthBtn.onclick = window.openProfileModal;
+            badge.innerHTML = `☁️ Хмара: <b>${user.email}</b>`;
+            document.getElementById('profileUserEmail').textContent = user.email;
+
+            // Перевірка статусу MFA
+            const enrolledFactors = multiFactor(user).enrolledFactors;
+            const mfaStatus = document.getElementById('mfaStatus');
+            if (enrolledFactors.length > 0) {
+                mfaStatus.textContent = '✅ 2FA увімкнено: ' + enrolledFactors[0].displayName;
+                mfaStatus.style.color = '#22c55e';
+            } else {
+                mfaStatus.textContent = '❌ 2FA не підключено';
+                mfaStatus.style.color = 'rgba(255,255,255,0.5)';
+            }
+
+            // Синхронізація чатів з хмари
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const cloudData = docSnap.data();
-                if (cloudData.chats) window.chats = cloudData.chats;
-                if (cloudData.apiKey) localStorage.setItem('openrouter_api_key', cloudData.apiKey);
-                window.renderChatList();
-                window.renderMessages();
+                if (cloudData.chats) {
+                    window.chats = cloudData.chats;
+                    window.saveChatsData(false);
+                    window.renderChatList();
+                    window.renderMessages();
+                }
             }
+        } else {
+            topAuthBtn.textContent = '☁️ Вхід';
+            topAuthBtn.onclick = window.openAuthModal;
+            badge.innerHTML = '📱 Локальний режим';
         }
     });
 
-    // Функція збереження в Firebase Firestore
-    async function syncToFirebase() {
-        if (!currentUser) return;
-        const userApiKey = localStorage.getItem('openrouter_api_key') || '';
-        await setDoc(doc(db, "users", currentUser.uid), {
-            chats: window.chats,
-            apiKey: userApiKey
-        });
-    }
+    window.syncToFirebase = async function() {
+        if (!window.currentUser) return;
+        try {
+            await setDoc(doc(db, "users", window.currentUser.uid), {
+                chats: window.chats
+            }, { merge: true });
+        } catch (e) {
+            console.error("Помилка збереження у Firebase:", e);
+        }
+    };
 
-    // Реєстрація / Вхід / Вихід
     window.handleAuth = async function(type) {
         const email = document.getElementById('authEmail').value.trim();
         const pass = document.getElementById('authPassword').value.trim();
+
+        if (type === 'reset') {
+            if (!email) return alert('Введіть вашу пошту для скидання пароля!');
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert('Лист для скидання пароля надіслано на пошту!');
+                window.closeAuthModal();
+            } catch (err) {
+                alert('Помилка: ' + err.message);
+            }
+            return;
+        }
 
         if (!email || !pass) return alert('Введіть email та пароль!');
 
         try {
             if (type === 'register') {
-                await createUserWithEmailAndPassword(auth, email, pass);
-                await syncToFirebase();
-                alert('Акаунт успішно створено!');
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                await sendEmailVerification(userCredential.user);
+                alert('Акаунт створено! На вашу пошту надіслано лист для підтвердження.');
+                window.closeAuthModal();
             } else if (type === 'login') {
-                await signInWithEmailAndPassword(auth, email, pass);
-                alert('Успішний вхід!');
+                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                if (!userCredential.user.emailVerified) {
+                    alert('Увага: будь ласка, підтвердіть вашу пошту за посиланням у листі.');
+                } else {
+                    alert('Успішний вхід!');
+                }
+                window.closeAuthModal();
             }
-            window.closeAuthModal();
         } catch (err) {
             alert('Помилка: ' + err.message);
         }
     };
 
-    window.logout = function() {
-        signOut(auth);
+    window.changeUserEmail = async function() {
+        const newEmail = document.getElementById('newEmailInput').value.trim();
+        if (!newEmail) return alert('Введіть новий Email');
+
+        if (window.currentUser) {
+            try {
+                await verifyBeforeUpdateEmail(window.currentUser, newEmail);
+                alert('На ваш новий email надіслано лист підтвердження. Сповіщення також надіслано на старий email з міркувань безпеки.');
+                document.getElementById('newEmailInput').value = '';
+                window.closeProfileModal();
+            } catch (err) {
+                alert('Помилка оновлення email: ' + err.message + '\n(Можливо, потрібно заново увійти в акаунт)');
+            }
+        }
     };
 
-    window.syncToFirebase = syncToFirebase;
+    // --- MFA (2FA) Logic ---
+    window.sendMfaCode = async function() {
+        const phoneNumber = document.getElementById('mfaPhoneNumber').value.trim();
+        if (!phoneNumber) return alert('Введіть номер телефону у форматі +380XXXXXXXXX');
+
+        try {
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+                    'size': 'invisible'
+                }, auth);
+            }
+
+            const multiFactorSession = await multiFactor(window.currentUser).getSession();
+            const phoneAuthProvider = new PhoneAuthProvider(auth);
+            
+            mfaVerificationId = await phoneAuthProvider.verifyPhoneNumber({
+                phoneNumber: phoneNumber,
+                session: multiFactorSession
+            }, window.recaptchaVerifier);
+
+            alert('SMS із кодом надіслано на ' + phoneNumber);
+            document.getElementById('mfaCodeSection').style.display = 'block';
+        } catch (err) {
+            alert('Помилка відправки SMS: ' + err.message);
+        }
+    };
+
+    window.verifyMfaCode = async function() {
+        const code = document.getElementById('mfaVerificationCode').value.trim();
+        if (!code || !mfaVerificationId) return alert('Введіть отриманий 6-значний код!');
+
+        try {
+            const cred = PhoneAuthProvider.credential(mfaVerificationId, code);
+            const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
+            
+            await multiFactor(window.currentUser).enroll(multiFactorAssertion, "Phone Number");
+            alert('🎉 2-Step Verification успішно підключено! Сповіщення надіслано на вашу пошту.');
+            window.closeMfaModal();
+            window.closeProfileModal();
+        } catch (err) {
+            alert('Помилка підтвердження коду: ' + err.message);
+        }
+    };
+
+    window.userLogout = function() {
+        signOut(auth);
+        window.closeProfileModal();
+    };
 </script>
 
+<!-- Script Logic -->
 <script>
-    // Основна логіка інтерфейсу
-    window.chats = JSON.parse(localStorage.getItem('nexus_chats')) || [];
-    window.activeChatId = localStorage.getItem('nexus_active_chat_id') || null;
+    let chats = JSON.parse(localStorage.getItem('nexus_chats')) || [];
+    let activeChatId = localStorage.getItem('nexus_active_chat_id') || null;
+
+    window.chats = chats;
 
     const messagesContainer = document.getElementById('messages');
     const inputField = document.getElementById('userInput');
     const chatListContainer = document.getElementById('chatList');
 
     window.addEventListener('load', () => {
-        if (window.chats.length === 0) {
+        if (chats.length === 0) {
             createNewChat();
         } else {
-            if (!window.activeChatId || !window.chats.find(c => c.id === window.activeChatId)) {
-                window.activeChatId = window.chats[0].id;
+            if (!activeChatId || !chats.find(c => c.id === activeChatId)) {
+                activeChatId = chats[0].id;
             }
             renderMessages();
         }
         renderChatList();
+        
+        if (!localStorage.getItem('openrouter_api_key')) {
+            showSettings();
+        }
     });
-
-    function saveChatsData() {
-        localStorage.setItem('nexus_chats', JSON.stringify(window.chats));
-        localStorage.setItem('nexus_active_chat_id', window.activeChatId);
-        if (window.syncToFirebase) window.syncToFirebase();
-    }
 
     function createNewChat() {
         const newChat = {
             id: 'chat_' + Date.now(),
-            title: 'Новий чат ' + (window.chats.length + 1),
+            title: 'Новий чат ' + (chats.length + 1),
             messages: [
                 { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
                 { role: "assistant", content: "Привіт! Я Nexus AI. Готовий до твоїх запитань!" }
             ]
         };
-        window.chats.unshift(newChat);
-        window.activeChatId = newChat.id;
+        chats.unshift(newChat);
+        activeChatId = newChat.id;
         saveChatsData();
         renderChatList();
         renderMessages();
@@ -422,7 +585,7 @@
     }
 
     function switchChat(id) {
-        window.activeChatId = id;
+        activeChatId = id;
         localStorage.setItem('nexus_active_chat_id', id);
         renderChatList();
         renderMessages();
@@ -431,16 +594,31 @@
 
     function deleteChat(id, event) {
         event.stopPropagation();
-        if (window.chats.length <= 1) return alert('Не можна видалити єдиний чат!');
-        window.chats = window.chats.filter(c => c.id !== id);
-        if (window.activeChatId === id) window.activeChatId = window.chats[0].id;
+        if (chats.length <= 1) {
+            alert('Не можна видалити єдиний чат!');
+            return;
+        }
+        chats = chats.filter(c => c.id !== id);
+        if (activeChatId === id) {
+            activeChatId = chats[0].id;
+        }
         saveChatsData();
         renderChatList();
         renderMessages();
     }
 
+    function saveChatsData(sync = true) {
+        window.chats = chats;
+        localStorage.setItem('nexus_chats', JSON.stringify(chats));
+        localStorage.setItem('nexus_active_chat_id', activeChatId);
+        if (sync && window.syncToFirebase) {
+            window.syncToFirebase();
+        }
+    }
+    window.saveChatsData = saveChatsData;
+
     function getCurrentChat() {
-        return window.chats.find(c => c.id === window.activeChatId);
+        return chats.find(c => c.id === activeChatId);
     }
 
     function renderMessages() {
@@ -449,16 +627,19 @@
         if (!currentChat) return;
 
         currentChat.messages.forEach(msg => {
-            if (msg.role !== 'system') appendMessageToDOM(msg.content, msg.role === 'user' ? 'user' : 'ai');
+            if (msg.role !== 'system') {
+                appendMessageToDOM(msg.content, msg.role === 'user' ? 'user' : 'ai');
+            }
         });
         scrollToBottom();
     }
+    window.renderMessages = renderMessages;
 
     function renderChatList() {
         chatListContainer.innerHTML = '';
-        window.chats.forEach(chat => {
+        chats.forEach(chat => {
             const item = document.createElement('div');
-            item.className = `chat-item ${chat.id === window.activeChatId ? 'active-chat' : ''}`;
+            item.className = `chat-item ${chat.id === activeChatId ? 'active-chat' : ''}`;
             item.onclick = () => switchChat(chat.id);
             item.innerHTML = `
                 <span>${chat.title}</span>
@@ -467,13 +648,17 @@
             chatListContainer.appendChild(item);
         });
     }
+    window.renderChatList = renderChatList;
 
     async function sendMessage() {
         const text = inputField.value.trim();
         if (!text) return;
 
         const API_KEY = localStorage.getItem('openrouter_api_key');
-        if (!API_KEY) return showSettings();
+        if (!API_KEY) {
+            showSettings();
+            return;
+        }
 
         const currentChat = getCurrentChat();
         appendMessageToDOM(text, 'user');
@@ -544,7 +729,9 @@
         if (indicator) indicator.remove();
     }
 
-    function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 
     function handleKeyPress(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -568,14 +755,15 @@
         document.getElementById('setupModal').classList.add('show');
     }
 
-    function closeSettingsModal() { document.getElementById('setupModal').classList.remove('show'); }
+    function closeSettingsModal() {
+        document.getElementById('setupModal').classList.remove('show');
+    }
 
     function saveApiKey() {
         const key = document.getElementById('apiKeyInput').value.trim();
         if (key) {
             localStorage.setItem('openrouter_api_key', key);
             closeSettingsModal();
-            if (window.syncToFirebase) window.syncToFirebase();
         } else {
             alert('Будь ласка, введіть ключ');
         }
@@ -583,24 +771,17 @@
 
     function openAuthModal() { document.getElementById('authModal').classList.add('show'); }
     function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
+    function openProfileModal() { document.getElementById('profileModal').classList.add('show'); }
+    function closeProfileModal() { document.getElementById('profileModal').classList.remove('show'); }
+    function openMfaModal() { document.getElementById('mfaModal').classList.add('show'); }
+    function closeMfaModal() { document.getElementById('mfaModal').classList.remove('show'); }
 
-    function updateAccountUI() {
-        const badge = document.getElementById('accountBadge');
-        const authBtn = document.getElementById('authBtn');
-        if (window.currentUser) {
-            badge.innerHTML = `☁️ Хмара: <b>${window.currentUser.email}</b>`;
-            authBtn.innerText = '🚪 Вийти';
-            authBtn.onclick = () => window.logout();
-        } else {
-            badge.innerHTML = '📱 Локальний режим (На пристрої)';
-            authBtn.innerText = '👤 Акаунт';
-            authBtn.onclick = () => openAuthModal();
-        }
-    }
-
-    window.renderChatList = renderChatList;
-    window.renderMessages = renderMessages;
+    window.openAuthModal = openAuthModal;
     window.closeAuthModal = closeAuthModal;
+    window.openProfileModal = openProfileModal;
+    window.closeProfileModal = closeProfileModal;
+    window.openMfaModal = openMfaModal;
+    window.closeMfaModal = closeMfaModal;
 </script>
 
 </body>
