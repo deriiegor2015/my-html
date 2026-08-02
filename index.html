@@ -120,16 +120,6 @@
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
         }
 
-        .btn-cancel {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
         /* Chat Container */
         .chat-container {
             width: 90%;
@@ -250,6 +240,7 @@
             position: relative;
             word-wrap: break-word;
             animation: fadeIn 0.3s ease;
+            white-space: pre-wrap;
         }
 
         @keyframes fadeIn {
@@ -337,7 +328,7 @@
 <div id="setupModal" class="modal show">
     <div class="modal-content">
         <h2>🔑 Налаштування API</h2>
-        <p>Введіть ваш OpenRouter API-ключ для розпочати роботу з чатом</p>
+        <p>Введіть ваш OpenRouter API-ключ для початку роботи</p>
         <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
         <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">
             Отримати ключ: <a href="https://openrouter.ai" target="_blank" style="color: rgb(99, 102, 241); text-decoration: none;">openrouter.ai</a>
@@ -364,7 +355,7 @@
         <div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>
     </div>
     <div class="chat-input">
-        <input type="text" id="userInput" class="chat-input-field" placeholder="Запитай мене про щось... (Enter для відправки)" onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" class="chat-input-field" placeholder="Запитай мене про щось..." onkeypress="handleKeyPress(event)">
         <button type="button" class="send-btn" onclick="sendMessage()">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
         </button>
@@ -377,7 +368,11 @@
     const setupModal = document.getElementById('setupModal');
     const apiKeyInput = document.getElementById('apiKeyInput');
 
-    // Завантаження API-ключа з localStorage
+    // Масив для збереження історії чату
+    let conversationHistory = [
+        { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." }
+    ];
+
     function loadApiKey() {
         const savedKey = localStorage.getItem('openrouter_api_key');
         if (savedKey) {
@@ -387,7 +382,6 @@
         return null;
     }
 
-    // Збереження API-ключа
     function saveApiKey() {
         const key = apiKeyInput.value.trim();
         if (!key) {
@@ -403,17 +397,13 @@
         inputField.focus();
     }
 
-    // Показування налаштувань
     function showSettings() {
         apiKeyInput.value = localStorage.getItem('openrouter_api_key') || '';
         setupModal.classList.add('show');
     }
 
-    // Enter для збереження ключа
     apiKeyInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            saveApiKey();
-        }
+        if (event.key === 'Enter') saveApiKey();
     });
 
     function handleKeyPress(event) {
@@ -434,6 +424,7 @@
         }
 
         appendMessage(text, 'user');
+        conversationHistory.push({ role: "user", content: text });
         inputField.value = '';
 
         const typingId = showTypingIndicator();
@@ -444,14 +435,12 @@
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${API_KEY}`,
-                    "HTTP-Referer": window.location.href
+                    "HTTP-Referer": window.location.origin,
+                    "X-Title": "Nexus AI"
                 },
                 body: JSON.stringify({
-                    model: "openrouter/auto",
-                    messages: [
-                        { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
-                        { role: "user", content: text }
-                    ]
+                    model: "openrouter/auto", // Залишили твою модель
+                    messages: conversationHistory
                 })
             });
 
@@ -459,7 +448,9 @@
             removeTypingIndicator(typingId);
 
             if (data.choices && data.choices[0].message) {
-                appendMessage(data.choices[0].message.content, 'ai');
+                const aiResponse = data.choices[0].message.content;
+                appendMessage(aiResponse, 'ai');
+                conversationHistory.push({ role: "assistant", content: aiResponse });
             } else if (data.error) {
                 appendMessage(`Помилка API: ${data.error.message}`, 'ai');
             } else {
@@ -499,20 +490,19 @@
 
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        setTimeout(() => {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
     }
 
     function clearChat() {
         if (confirm('Ви впевнені? Це видалить всю історію чату.')) {
             messagesContainer.innerHTML = '<div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>';
+            conversationHistory = [
+                { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." }
+            ];
             inputField.value = '';
             inputField.focus();
         }
     }
 
-    // Ініціалізація при завантаженні
     window.addEventListener('load', () => {
         if (!loadApiKey()) {
             setupModal.classList.add('show');
