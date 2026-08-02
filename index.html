@@ -9,7 +9,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
@@ -29,15 +29,87 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Modal Setup */
+        /* Sidebar (Всі чати) */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1001;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active { left: 0; }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-item {
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .chat-item:hover, .chat-item.active-chat {
+            background: rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+        }
+
+        .delete-chat-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .delete-chat-btn:hover { color: #ff4d4d; }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .overlay.active { display: block; }
+
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
         }
@@ -49,30 +121,20 @@
         }
 
         .modal-content {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            padding: 40px;
+            padding: 30px;
             max-width: 400px;
             width: 90%;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
-        .modal-content h2 {
-            color: white;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .modal-content p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
+        .modal-content h2 { color: white; margin-bottom: 15px; font-size: 1.4rem; }
+        .modal-content p { color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; font-size: 0.9rem; }
+        
         .modal-content input {
             width: 100%;
             padding: 12px 15px;
@@ -81,44 +143,18 @@
             background: rgba(255, 255, 255, 0.05);
             color: white;
             font-size: 0.9rem;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             outline: none;
-            transition: all 0.3s ease;
         }
 
-        .modal-content input:focus {
-            border-color: rgb(99, 102, 241);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
-        }
-
-        .modal-content input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
+        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
         .modal-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s ease;
         }
 
-        .btn-save {
-            background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
-            color: white;
-        }
-
-        .btn-save:hover {
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-        }
+        .btn-save { background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247)); color: white; }
+        .btn-cancel { background: rgba(255, 255, 255, 0.1); color: white; }
 
         /* Chat Container */
         .chat-container {
@@ -128,232 +164,127 @@
             max-height: 700px;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .chat-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         .chat-header {
-            padding: 20px;
+            padding: 15px 20px;
             background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex: 1;
-        }
-
-        .chat-header h1 {
-            font-size: 1.2rem;
-            color: white;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+        .header-content { display: flex; align-items: center; gap: 10px; }
+        .chat-header h1 { font-size: 1.1rem; color: white; font-weight: 600; letter-spacing: 1px; }
 
         .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: rgb(34, 197, 94);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px rgb(34, 197, 94);
-            animation: pulse 2s infinite;
+            height: 10px; width: 10px; background-color: rgb(34, 197, 94);
+            border-radius: 50%; display: inline-block; box-shadow: 0 0 10px rgb(34, 197, 94);
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
+        .header-buttons { display: flex; gap: 6px; }
         .header-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .header-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgb(99, 102, 241);
-        }
-
-        .clear-btn:hover {
-            background: rgba(255, 59, 48, 0.2);
-            border-color: rgb(255, 59, 48);
-            color: rgb(255, 100, 100);
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
         }
 
         .chat-messages {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            scroll-behavior: smooth;
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
         }
 
         .message {
-            padding: 12px 16px;
-            border-radius: 18px;
-            max-width: 85%;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            position: relative;
-            word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
-            white-space: pre-wrap;
+            padding: 12px 16px; border-radius: 18px; max-width: 85%;
+            font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user {
-            background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-        }
-
-        .ai {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgb(226, 232, 240);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .user { background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247)); color: white; align-self: flex-end; }
+        .ai { background: rgba(255, 255, 255, 0.1); color: rgb(226, 232, 240); align-self: flex-start; }
 
         .chat-input {
-            display: flex;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            gap: 10px;
+            display: flex; padding: 15px; background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1); gap: 10px;
         }
 
         input.chat-input-field {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input.chat-input-field:focus {
-            border-color: rgb(99, 102, 241);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
-        }
-
-        input.chat-input-field::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            flex: 1; padding: 12px 15px; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px; background: rgba(255, 255, 255, 0.05); color: white; outline: none;
         }
 
         button.send-btn {
-            padding: 0 20px;
-            border: none;
-            background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
-            color: white;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0 18px; border: none; background: linear-gradient(135deg, rgb(99, 102, 241), rgb(168, 85, 247));
+            color: white; border-radius: 14px; cursor: pointer; display: flex; align-items: center;
         }
+        button.send-btn svg { width: 18px; height: 18px; fill: white; }
 
-        button.send-btn:hover {
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-        }
-
-        button.send-btn:active {
-            transform: scale(0.95);
-        }
-        
-        button.send-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
+        .account-badge {
+            font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; text-align: center; word-break: break-all;
         }
     </style>
 </head>
 <body>
 
-<!-- Setup Modal -->
-<div id="setupModal" class="modal show">
+<!-- Sidebar & Overlay -->
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h3>💬 Всі чати</h3>
+        <button class="header-btn" onclick="toggleSidebar()">✕</button>
+    </div>
+    <div class="chat-list" id="chatList"></div>
+    <div class="account-badge" id="accountBadge">Локальний режим (На пристрої)</div>
+    <div style="margin-top: 15px; display: flex; gap: 5px;">
+        <button class="header-btn" style="flex:1" id="authBtn" onclick="openAuthModal()">👤 Акаунт</button>
+    </div>
+</div>
+
+<!-- Modal: Auth -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <h2>☁️ Firebase Акаунт</h2>
+        <p>Увійдіть або зареєструйтесь для хмарної синхронізації</p>
+        <input type="email" id="authEmail" placeholder="Електронна пошта" />
+        <input type="password" id="authPassword" placeholder="Пароль" />
+        <div class="modal-buttons">
+            <button class="btn-save" onclick="handleAuth('login')">Увійти</button>
+            <button class="btn-cancel" onclick="handleAuth('register')">Реєстрація</button>
+        </div>
+        <button class="btn-cancel" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">Закрити</button>
+    </div>
+</div>
+
+<!-- Modal: Settings API -->
+<div id="setupModal" class="modal">
     <div class="modal-content">
         <h2>🔑 Налаштування API</h2>
-        <p>Введіть ваш OpenRouter API-ключ для початку роботи</p>
+        <p>Введіть ваш OpenRouter API-ключ</p>
         <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
-        <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">
-            Отримати ключ: <a href="https://openrouter.ai" target="_blank" style="color: rgb(99, 102, 241); text-decoration: none;">openrouter.ai</a>
-        </p>
         <div class="modal-buttons">
             <button class="btn-save" onclick="saveApiKey()">Зберегти</button>
+            <button class="btn-cancel" onclick="closeSettingsModal()">Скасувати</button>
         </div>
     </div>
 </div>
 
-<!-- Chat Container -->
+<!-- Main Chat Container -->
 <div class="chat-container">
     <div class="chat-header">
+        <button class="header-btn" onclick="toggleSidebar()" title="Всі чати">☰</button>
         <div class="header-content">
             <span class="status-dot"></span>
             <h1>Nexus AI</h1>
         </div>
         <div class="header-buttons">
+            <button class="header-btn" onclick="createNewChat()" title="Новий чат">➕</button>
             <button class="header-btn" onclick="showSettings()" title="Налаштування">⚙️</button>
-            <button class="header-btn clear-btn" onclick="clearChat()" title="Очистити чат">🗑️</button>
         </div>
     </div>
-    <div class="chat-messages" id="messages">
-        <div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>
-    </div>
+    
+    <div class="chat-messages" id="messages"></div>
+
     <div class="chat-input">
         <input type="text" id="userInput" class="chat-input-field" placeholder="Запитай мене про щось..." onkeypress="handleKeyPress(event)">
         <button type="button" class="send-btn" onclick="sendMessage()">
@@ -362,55 +293,179 @@
     </div>
 </div>
 
-<script>
-    const inputField = document.getElementById('userInput');
-    const messagesContainer = document.getElementById('messages');
-    const setupModal = document.getElementById('setupModal');
-    const apiKeyInput = document.getElementById('apiKeyInput');
+<!-- Підключення Firebase (SDK v9 Modular) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { 
+        getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { 
+        getFirestore, doc, setDoc, getDoc 
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // Масив для збереження історії чату
-    let conversationHistory = [
-        { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." }
-    ];
+    // 🔴 ВСТАВ СВОЇ ДАНІ З FIREBASE CONSOLE ТУТ:
+    const firebaseConfig = {
+        apiKey: "ТВІЙ_FIREBASE_API_KEY",
+        authDomain: "ТВІЙ_PROJECT_ID.firebaseapp.com",
+        projectId: "ТВІЙ_PROJECT_ID",
+        storageBucket: "ТВІЙ_PROJECT_ID.appspot.com",
+        messagingSenderId: "ТВІЙ_SENDER_ID",
+        appId: "ТВІЙ_APP_ID"
+    };
 
-    function loadApiKey() {
-        const savedKey = localStorage.getItem('openrouter_api_key');
-        if (savedKey) {
-            setupModal.classList.remove('show');
-            return savedKey;
+    // Ініціалізація Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+
+    // Відстеження стану авторизації
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        updateAccountUI();
+        if (user) {
+            // Завантажуємо дані з хмари Firestore
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const cloudData = docSnap.data();
+                if (cloudData.chats) window.chats = cloudData.chats;
+                if (cloudData.apiKey) localStorage.setItem('openrouter_api_key', cloudData.apiKey);
+                window.renderChatList();
+                window.renderMessages();
+            }
         }
-        return null;
-    }
-
-    function saveApiKey() {
-        const key = apiKeyInput.value.trim();
-        if (!key) {
-            alert('Будь ласка, введіть API-ключ');
-            return;
-        }
-        if (!key.startsWith('sk-or-v1-')) {
-            alert('Невірний формат API-ключа. Він повинен починатися з sk-or-v1-');
-            return;
-        }
-        localStorage.setItem('openrouter_api_key', key);
-        setupModal.classList.remove('show');
-        inputField.focus();
-    }
-
-    function showSettings() {
-        apiKeyInput.value = localStorage.getItem('openrouter_api_key') || '';
-        setupModal.classList.add('show');
-    }
-
-    apiKeyInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') saveApiKey();
     });
 
-    function handleKeyPress(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage();
+    // Функція збереження в Firebase Firestore
+    async function syncToFirebase() {
+        if (!currentUser) return;
+        const userApiKey = localStorage.getItem('openrouter_api_key') || '';
+        await setDoc(doc(db, "users", currentUser.uid), {
+            chats: window.chats,
+            apiKey: userApiKey
+        });
+    }
+
+    // Реєстрація / Вхід / Вихід
+    window.handleAuth = async function(type) {
+        const email = document.getElementById('authEmail').value.trim();
+        const pass = document.getElementById('authPassword').value.trim();
+
+        if (!email || !pass) return alert('Введіть email та пароль!');
+
+        try {
+            if (type === 'register') {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                await syncToFirebase();
+                alert('Акаунт успішно створено!');
+            } else if (type === 'login') {
+                await signInWithEmailAndPassword(auth, email, pass);
+                alert('Успішний вхід!');
+            }
+            window.closeAuthModal();
+        } catch (err) {
+            alert('Помилка: ' + err.message);
         }
+    };
+
+    window.logout = function() {
+        signOut(auth);
+    };
+
+    window.syncToFirebase = syncToFirebase;
+</script>
+
+<script>
+    // Основна логіка інтерфейсу
+    window.chats = JSON.parse(localStorage.getItem('nexus_chats')) || [];
+    window.activeChatId = localStorage.getItem('nexus_active_chat_id') || null;
+
+    const messagesContainer = document.getElementById('messages');
+    const inputField = document.getElementById('userInput');
+    const chatListContainer = document.getElementById('chatList');
+
+    window.addEventListener('load', () => {
+        if (window.chats.length === 0) {
+            createNewChat();
+        } else {
+            if (!window.activeChatId || !window.chats.find(c => c.id === window.activeChatId)) {
+                window.activeChatId = window.chats[0].id;
+            }
+            renderMessages();
+        }
+        renderChatList();
+    });
+
+    function saveChatsData() {
+        localStorage.setItem('nexus_chats', JSON.stringify(window.chats));
+        localStorage.setItem('nexus_active_chat_id', window.activeChatId);
+        if (window.syncToFirebase) window.syncToFirebase();
+    }
+
+    function createNewChat() {
+        const newChat = {
+            id: 'chat_' + Date.now(),
+            title: 'Новий чат ' + (window.chats.length + 1),
+            messages: [
+                { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." },
+                { role: "assistant", content: "Привіт! Я Nexus AI. Готовий до твоїх запитань!" }
+            ]
+        };
+        window.chats.unshift(newChat);
+        window.activeChatId = newChat.id;
+        saveChatsData();
+        renderChatList();
+        renderMessages();
+        closeSidebar();
+    }
+
+    function switchChat(id) {
+        window.activeChatId = id;
+        localStorage.setItem('nexus_active_chat_id', id);
+        renderChatList();
+        renderMessages();
+        closeSidebar();
+    }
+
+    function deleteChat(id, event) {
+        event.stopPropagation();
+        if (window.chats.length <= 1) return alert('Не можна видалити єдиний чат!');
+        window.chats = window.chats.filter(c => c.id !== id);
+        if (window.activeChatId === id) window.activeChatId = window.chats[0].id;
+        saveChatsData();
+        renderChatList();
+        renderMessages();
+    }
+
+    function getCurrentChat() {
+        return window.chats.find(c => c.id === window.activeChatId);
+    }
+
+    function renderMessages() {
+        messagesContainer.innerHTML = '';
+        const currentChat = getCurrentChat();
+        if (!currentChat) return;
+
+        currentChat.messages.forEach(msg => {
+            if (msg.role !== 'system') appendMessageToDOM(msg.content, msg.role === 'user' ? 'user' : 'ai');
+        });
+        scrollToBottom();
+    }
+
+    function renderChatList() {
+        chatListContainer.innerHTML = '';
+        window.chats.forEach(chat => {
+            const item = document.createElement('div');
+            item.className = `chat-item ${chat.id === window.activeChatId ? 'active-chat' : ''}`;
+            item.onclick = () => switchChat(chat.id);
+            item.innerHTML = `
+                <span>${chat.title}</span>
+                <button class="delete-chat-btn" onclick="deleteChat('${chat.id}', event)">🗑️</button>
+            `;
+            chatListContainer.appendChild(item);
+        });
     }
 
     async function sendMessage() {
@@ -418,14 +473,19 @@
         if (!text) return;
 
         const API_KEY = localStorage.getItem('openrouter_api_key');
-        if (!API_KEY) {
-            showSettings();
-            return;
+        if (!API_KEY) return showSettings();
+
+        const currentChat = getCurrentChat();
+        appendMessageToDOM(text, 'user');
+        currentChat.messages.push({ role: "user", content: text });
+        
+        if (currentChat.messages.length === 3) {
+            currentChat.title = text.substring(0, 20) + '...';
+            renderChatList();
         }
 
-        appendMessage(text, 'user');
-        conversationHistory.push({ role: "user", content: text });
         inputField.value = '';
+        saveChatsData();
 
         const typingId = showTypingIndicator();
 
@@ -435,12 +495,11 @@
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${API_KEY}`,
-                    "HTTP-Referer": window.location.origin,
-                    "X-Title": "Nexus AI"
+                    "HTTP-Referer": window.location.origin
                 },
                 body: JSON.stringify({
-                    model: "openrouter/auto", // Залишили твою модель
-                    messages: conversationHistory
+                    model: "openrouter/auto",
+                    messages: currentChat.messages
                 })
             });
 
@@ -449,22 +508,19 @@
 
             if (data.choices && data.choices[0].message) {
                 const aiResponse = data.choices[0].message.content;
-                appendMessage(aiResponse, 'ai');
-                conversationHistory.push({ role: "assistant", content: aiResponse });
+                appendMessageToDOM(aiResponse, 'ai');
+                currentChat.messages.push({ role: "assistant", content: aiResponse });
+                saveChatsData();
             } else if (data.error) {
-                appendMessage(`Помилка API: ${data.error.message}`, 'ai');
-            } else {
-                appendMessage("Не вдалося отримати відповідь.", 'ai');
+                appendMessageToDOM(`Помилка API: ${data.error.message}`, 'ai');
             }
-
         } catch (error) {
             removeTypingIndicator(typingId);
-            appendMessage(`Помилка мережі: ${error.message}`, 'ai');
-            console.error(error);
+            appendMessageToDOM(`Помилка мережі: ${error.message}`, 'ai');
         }
     }
 
-    function appendMessage(text, sender) {
+    function appendMessageToDOM(text, sender) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${sender}`;
         msgDiv.textContent = text;
@@ -488,29 +544,63 @@
         if (indicator) indicator.remove();
     }
 
-    function scrollToBottom() {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+    function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
 
-    function clearChat() {
-        if (confirm('Ви впевнені? Це видалить всю історію чату.')) {
-            messagesContainer.innerHTML = '<div class="message ai">Привіт! Я Nexus AI. Готовий до твоїх запитань. Напиши щось цікаве!</div>';
-            conversationHistory = [
-                { role: "system", content: "Ти корисний асистент. Відповідай українською мовою." }
-            ];
-            inputField.value = '';
-            inputField.focus();
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
     }
 
-    window.addEventListener('load', () => {
-        if (!loadApiKey()) {
-            setupModal.classList.add('show');
-            apiKeyInput.focus();
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    }
+
+    function showSettings() {
+        document.getElementById('apiKeyInput').value = localStorage.getItem('openrouter_api_key') || '';
+        document.getElementById('setupModal').classList.add('show');
+    }
+
+    function closeSettingsModal() { document.getElementById('setupModal').classList.remove('show'); }
+
+    function saveApiKey() {
+        const key = document.getElementById('apiKeyInput').value.trim();
+        if (key) {
+            localStorage.setItem('openrouter_api_key', key);
+            closeSettingsModal();
+            if (window.syncToFirebase) window.syncToFirebase();
         } else {
-            inputField.focus();
+            alert('Будь ласка, введіть ключ');
         }
-    });
+    }
+
+    function openAuthModal() { document.getElementById('authModal').classList.add('show'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
+
+    function updateAccountUI() {
+        const badge = document.getElementById('accountBadge');
+        const authBtn = document.getElementById('authBtn');
+        if (window.currentUser) {
+            badge.innerHTML = `☁️ Хмара: <b>${window.currentUser.email}</b>`;
+            authBtn.innerText = '🚪 Вийти';
+            authBtn.onclick = () => window.logout();
+        } else {
+            badge.innerHTML = '📱 Локальний режим (На пристрої)';
+            authBtn.innerText = '👤 Акаунт';
+            authBtn.onclick = () => openAuthModal();
+        }
+    }
+
+    window.renderChatList = renderChatList;
+    window.renderMessages = renderMessages;
+    window.closeAuthModal = closeAuthModal;
 </script>
 
 </body>
