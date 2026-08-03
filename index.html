@@ -2,35 +2,32 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nexus AI | Mobile & Desktop Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI | Free & Vision</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
         body {
-            height: 100vh; height: 100dvh; display: flex; justify-content: center; align-items: center; overflow: hidden;
+            height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden;
             background: linear-gradient(-45deg, #0f172a, #1e293b, #1e1b4b, #0f172a);
             background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: white;
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .app-container {
-            width: 98%; max-width: 1280px; height: 94vh; height: 94dvh; display: flex;
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            width: 98%; max-width: 1200px; height: 92vh; display: flex;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* Sidebar Desktop */
         .sidebar {
-            width: 270px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; padding: 15px; gap: 12px; transition: all 0.3s ease;
+            width: 260px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; padding: 15px; gap: 15px;
         }
         .new-chat-btn {
             padding: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); border: none;
             border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: transform 0.2s;
         }
-        .new-chat-btn:active { transform: scale(0.98); }
         .chats-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .chat-item {
             padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,0.05); cursor: pointer;
@@ -39,120 +36,68 @@
         }
         .chat-item:hover, .chat-item.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
         .chat-title-text { overflow: hidden; text-overflow: ellipsis; }
-        .delete-chat-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; }
+        .delete-chat-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; display: none; }
+        .chat-item:hover .delete-chat-btn { display: inline; }
 
-        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.82rem; }
-        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; display: inline-block; margin-top: 2px; }
+        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
 
-        /* Main Chat Window */
-        .chat-main { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
+        .chat-main { flex: 1; display: flex; flex-direction: column; }
         .chat-header {
-            padding: 12px 16px; background: rgba(0, 0, 0, 0.2);
+            padding: 15px 20px; background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; justify-content: space-between; align-items: center; gap: 8px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .chat-header h3 { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .live-tools-bar { display: flex; gap: 6px; align-items: center; }
-        
-        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
-        /* Messages */
-        .message { padding: 12px 16px; border-radius: 18px; max-width: 88%; font-size: 0.92rem; line-height: 1.45; word-break: break-word; }
+        .message { padding: 14px 18px; border-radius: 18px; max-width: 85%; font-size: 0.95rem; line-height: 1.5; word-break: break-word; }
         .user { background: linear-gradient(135deg, #6366f1, #a855f7); align-self: flex-end; color: white; }
         .ai { background: rgba(255, 255, 255, 0.08); align-self: flex-start; border: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; }
 
-        /* Security Verdict Cards */
-        .verdict-card { padding: 8px 12px; border-radius: 10px; font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; }
+        .verdict-card { padding: 10px 14px; border-radius: 10px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
         .verdict-safe { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80; }
         .verdict-warning { background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fde047; }
         .verdict-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; }
 
-        /* Media Elements */
-        .preview-img { max-width: 100%; max-height: 200px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
-        pre { background: #090d16; padding: 10px; border-radius: 10px; overflow-x: auto; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        code { font-family: monospace; font-size: 0.8rem; color: #38bdf8; }
-        .download-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; background: #22c55e; color: white; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 0.78rem; border: none; cursor: pointer; }
+        .preview-img { max-width: 140px; max-height: 140px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
 
-        /* Live Video Streaming Container */
-        .live-preview-container {
-            position: absolute; top: 60px; right: 12px; width: 190px; background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #a855f7; border-radius: 16px; padding: 8px; display: none; flex-direction: column; gap: 6px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 20; backdrop-filter: blur(8px);
-        }
-        .live-preview-container.active { display: flex; }
-        video { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; background: #000; }
-        .live-status { font-size: 0.7rem; color: #22c55e; display: flex; align-items: center; gap: 4px; font-weight: bold; }
-        .live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        pre { background: #090d16; padding: 12px; border-radius: 10px; overflow-x: auto; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        code { font-family: monospace; font-size: 0.85rem; color: #38bdf8; }
 
-        /* Input Bar */
-        .chat-input-area { padding: 10px 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 6px; }
-        .file-attachment-bar { display: flex; gap: 8px; align-items: center; font-size: 0.8rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; }
-        .input-row { display: flex; gap: 6px; }
-        input[type="text"] { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 0.9rem; }
+        .chat-input-area { padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 8px; }
+        .file-attachment-bar { display: flex; gap: 10px; align-items: center; font-size: 0.85rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; }
+        .input-row { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 0.95rem; }
         
-        .btn { padding: 8px 14px; border: none; border-radius: 10px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
-        .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; }
-        .btn-live { background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #e9d5ff; padding: 8px 10px; }
-        .btn-live.active { background: #a855f7; color: white; }
+        .btn { padding: 10px 18px; border: none; border-radius: 12px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; }
+        .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* Modal Settings */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); padding: 15px; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal.show { display: flex; }
-        .modal-content { background: #1e293b; padding: 20px; border-radius: 20px; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        select, input[type="password"], input[type="text"].modal-input { padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.85rem; width: 100%; }
+        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 440px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        select, input[type="password"], input[type="text"].modal-input { padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.9rem; width: 100%; }
+        
+        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; }
         a { color: #38bdf8; text-decoration: none; }
-
-        /* 📱 MOBILE RESPONSIVE MEDIA QUERIES */
-        .menu-toggle-btn { display: none; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 6px 10px; font-size: 1rem; cursor: pointer; }
-
-        @media (max-width: 768px) {
-            .app-container { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; border: none; }
-            .menu-toggle-btn { display: block; }
-            
-            .sidebar {
-                position: absolute; top: 0; left: -100%; width: 260px; height: 100%; z-index: 30;
-                background: #0f172a; transition: left 0.3s ease; box-shadow: 10px 0 30px rgba(0,0,0,0.8);
-            }
-            .sidebar.open { left: 0; }
-            
-            .live-tools-bar .btn-text { display: none; } /* Ховаємо текст на мобільних, залишаємо іконки */
-            .live-preview-container { width: 160px; top: 55px; right: 8px; }
-            video { height: 95px; }
-            .message { max-width: 92%; }
-        }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="sidebar" id="sidebar">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button class="new-chat-btn" style="flex: 1;" onclick="createNewChat()">➕ Новий чат</button>
-            <button onclick="toggleSidebar()" style="background: none; border: none; color: white; font-size: 1.2rem; margin-left: 10px; cursor: pointer; display: none;" id="closeSidebarBtn">✕</button>
-        </div>
+    <div class="sidebar">
+        <button class="new-chat-btn" onclick="createNewChat()">➕ Новий чат</button>
         <div class="chats-list" id="chatsList"></div>
         <div class="user-profile">
-            <span>📱 Мобільний / ПК режим</span>
-            <br><span class="badge-device">Оптимізовано під сенсор</span>
+            <div>
+                <span>📱 Автономний режим</span>
+                <br><span class="badge-device">Локальні дані</span>
+            </div>
         </div>
     </div>
 
     <div class="chat-main">
         <div class="chat-header">
-            <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
             <h3 id="currentChatTitle">💬 Чат</h3>
-            <div class="live-tools-bar">
-                <button class="btn btn-live" id="camBtn" onclick="toggleStream('camera')" title="Увімкнути Камеру">📷 <span class="btn-text">Камера</span></button>
-                <button class="btn btn-live" id="screenBtn" onclick="toggleStream('screen')" title="Увімкнути Екран">🖥️ <span class="btn-text">Екран</span></button>
-                <button class="btn btn-file" onclick="openSettings()" title="Налаштування">⚙️</button>
-            </div>
-        </div>
-
-        <div class="live-preview-container" id="livePreviewContainer">
-            <div class="live-status"><span class="live-dot"></span> <span id="liveStatusText">Трансляція...</span></div>
-            <video id="liveVideo" autoplay playsinline muted></video>
-            <button class="btn" style="padding: 4px; font-size: 0.7rem; background: #ef4444;" onclick="stopStream()">⏹ Стоп</button>
+            <button class="btn btn-file" onclick="openSettings()">⚙️ Налаштування AI</button>
         </div>
 
         <div class="chat-messages" id="messages"></div>
@@ -164,79 +109,69 @@
             </div>
             <div class="input-row">
                 <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
-                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити файл">📎</button>
-                <input type="text" id="userInput" placeholder="Введіть запит..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити фото чи файл">📎</button>
+                <input type="text" id="userInput" placeholder="Опишіть запит або прикріпіть фото..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button class="btn" onclick="sendMessage()">➔</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Модальне вікно -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <h3>⚙️ Налаштування AI</h3>
+        <h3>⚙️ Налаштування AI (Безкоштовно)</h3>
         
-        <label style="font-size: 0.8rem; color: #a1a1aa;">Провайдер AI:</label>
+        <label style="font-size: 0.85rem; color: #a1a1aa;">Режим роботи:</label>
         <select id="apiProvider" onchange="toggleProviderSettings()">
-            <option value="gemini">Google Gemini API (Безкоштовно)</option>
-            <option value="ollama">Ollama (Локально)</option>
+            <option value="gemini">Google Gemini API (Безкоштовно у хмарі)</option>
+            <option value="ollama">Ollama (100% Локально на ПК)</option>
         </select>
 
         <div id="geminiGroup">
-            <label style="font-size: 0.8rem; color: #a1a1aa;">Google Gemini API Key:</label>
+            <label style="font-size: 0.85rem; color: #a1a1aa;">Google Gemini API Key:</label>
             <input type="password" id="geminiKeyInput" placeholder="AIzaSy...">
-            <p style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
-                🔑 Отримати: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+                🔑 Отримати ключ безкоштовно: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
             </p>
         </div>
 
         <div id="ollamaGroup" style="display: none;">
-            <label style="font-size: 0.8rem; color: #a1a1aa;">Ollama URL:</label>
+            <label style="font-size: 0.85rem; color: #a1a1aa;">Ollama URL:</label>
             <input type="text" class="modal-input" id="ollamaUrlInput" value="http://localhost:11434">
-            <label style="font-size: 0.8rem; color: #a1a1aa; margin-top: 4px;">Модель Vision:</label>
+            <label style="font-size: 0.85rem; color: #a1a1aa; margin-top: 6px;">Модель:</label>
             <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision">
         </div>
 
-        <button class="btn" style="margin-top: 8px;" onclick="saveSettings()">Зберегти</button>
+        <button class="btn" style="margin-top: 10px;" onclick="saveSettings()">Зберегти</button>
     </div>
 </div>
-
-<canvas id="snapshotCanvas" style="display: none;"></canvas>
 
 <script>
     let chats = [];
     let currentChatId = null;
     let attachedFile = null;
-    let activeStream = null;
-    let activeStreamType = null;
 
     window.onload = () => {
         loadSettings();
         loadUserChats();
-        checkMobileUI();
     };
 
-    function checkMobileUI() {
-        if (window.innerWidth <= 768) {
-            document.getElementById('closeSidebarBtn').style.display = 'block';
+    function loadUserChats() {
+        try {
+            const savedChats = localStorage.getItem('nexus_chats_free');
+            chats = savedChats ? JSON.parse(savedChats) : [];
+        } catch(e) {
+            chats = [];
+        }
+        if (chats.length === 0) {
+            createNewChat();
+        } else {
+            selectChat(chats[0].id);
         }
     }
 
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('open');
-    }
-
-    function loadUserChats() {
-        const savedChats = localStorage.getItem('nexus_chats_free_full');
-        chats = savedChats ? JSON.parse(savedChats) : [];
-        if (chats.length === 0) createNewChat();
-        else selectChat(chats[0].id);
-    }
-
     function saveUserChats() {
-        localStorage.setItem('nexus_chats_free_full', JSON.stringify(chats));
+        localStorage.setItem('nexus_chats_free', JSON.stringify(chats));
         renderChatsList();
     }
 
@@ -244,29 +179,28 @@
         const newChat = {
             id: 'chat_' + Date.now(),
             title: 'Новий чат',
-            messages: [{ 
-                role: 'ai', 
-                content: 'Привіт! Я працюю і на ПК, і на смартфонах 📱.<br><br>Ви можете надсилати фото, аналізувати код або вмикати ** Live Vision** через 📷 / 🖥️.' 
-            }]
+            messages: [{ role: 'ai', content: 'Привіт! Я підтримую **Vision** (роботу з фото). Прикріпіть зображення або поставте запитання.' }]
         };
         chats.unshift(newChat);
         saveUserChats();
         selectChat(newChat.id);
-        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
 
     function selectChat(chatId) {
         currentChatId = chatId;
         renderChatsList();
         renderMessages();
-        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
 
     function deleteChat(chatId, event) {
         event.stopPropagation();
         chats = chats.filter(c => c.id !== chatId);
-        if (chats.length === 0) createNewChat();
-        else { saveUserChats(); selectChat(chats[0].id); }
+        if (chats.length === 0) {
+            createNewChat();
+        } else {
+            saveUserChats();
+            selectChat(chats[0].id);
+        }
     }
 
     function renderChatsList() {
@@ -275,7 +209,18 @@
         chats.forEach(chat => {
             const item = document.createElement('div');
             item.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
-            item.innerHTML = `<span class="chat-title-text">${chat.title}</span><button class="delete-chat-btn" onclick="deleteChat('${chat.id}', event)">🗑️</button>`;
+            
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'chat-title-text';
+            titleSpan.innerText = chat.title;
+            
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-chat-btn';
+            delBtn.innerText = '🗑️';
+            delBtn.onclick = (e) => deleteChat(chat.id, e);
+
+            item.appendChild(titleSpan);
+            item.appendChild(delBtn);
             item.onclick = () => selectChat(chat.id);
             listEl.appendChild(item);
         });
@@ -284,91 +229,93 @@
     function renderMessages() {
         const chat = chats.find(c => c.id === currentChatId);
         if (!chat) return;
+
         document.getElementById('currentChatTitle').innerText = `💬 ${chat.title}`;
         const msgContainer = document.getElementById('messages');
         msgContainer.innerHTML = '';
-        chat.messages.forEach(msg => appendMessageHTML(msg.content, msg.role));
+
+        chat.messages.forEach(msg => {
+            appendMessageHTML(msg.content, msg.role);
+        });
     }
 
-    /* 🎥 LIVE STREAMING */
-    async function toggleStream(type) {
-        if (activeStreamType === type) {
-            stopStream();
-            return;
-        }
+    function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
+    function loadSettings() {
+        document.getElementById('geminiKeyInput').value = localStorage.getItem('gemini_api_key') || '';
+        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'gemini';
+        document.getElementById('ollamaUrlInput').value = localStorage.getItem('ollama_url') || 'http://localhost:11434';
+        document.getElementById('localModelInput').value = localStorage.getItem('local_model') || 'llama3.2-vision';
+        toggleProviderSettings();
+    }
 
-        stopStream();
+    function saveSettings() {
+        localStorage.setItem('gemini_api_key', document.getElementById('geminiKeyInput').value.trim());
+        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
+        localStorage.setItem('ollama_url', document.getElementById('ollamaUrlInput').value.trim());
+        localStorage.setItem('local_model', document.getElementById('localModelInput').value.trim());
+        document.getElementById('settingsModal').classList.remove('show');
+    }
 
-        try {
-            if (type === 'camera') {
-                activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                document.getElementById('camBtn').classList.add('active');
-                document.getElementById('liveStatusText').innerText = 'Камера активна';
-            } else if (type === 'screen') {
-                activeStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                document.getElementById('screenBtn').classList.add('active');
-                document.getElementById('liveStatusText').innerText = 'Екран активний';
+    function toggleProviderSettings() {
+        const provider = document.getElementById('apiProvider').value;
+        document.getElementById('geminiGroup').style.display = provider === 'gemini' ? 'block' : 'none';
+        document.getElementById('ollamaGroup').style.display = provider === 'ollama' ? 'block' : 'none';
+    }
+
+    // Беспечна обробка файлів та зображень (Vision)
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        const isImage = file.type.startsWith('image/');
+
+        reader.onload = function(evt) {
+            const rawResult = evt.target.result;
+            if (isImage) {
+                attachedFile = { name: file.name, type: file.type, content: rawResult, isImage: true };
+                showFilePreview(`🖼️ Фото: ${file.name}`);
+            } else {
+                attachedFile = { name: file.name, type: file.type, content: rawResult, isImage: false };
+                showFilePreview(`📄 Файл: ${file.name}`);
             }
+        };
 
-            activeStreamType = type;
-            const videoEl = document.getElementById('liveVideo');
-            videoEl.srcObject = activeStream;
-            document.getElementById('livePreviewContainer').classList.add('active');
-
-            activeStream.getVideoTracks()[0].onended = () => stopStream();
-        } catch (err) {
-            alert("Помилка доступу до відео: " + err.message);
-            stopStream();
+        if (isImage) {
+            reader.readAsDataURL(file);
+        } else {
+            reader.readAsText(file);
         }
     }
 
-    function stopStream() {
-        if (activeStream) {
-            activeStream.getTracks().forEach(track => track.stop());
-            activeStream = null;
-        }
-        activeStreamType = null;
-        document.getElementById('camBtn').classList.remove('active');
-        document.getElementById('screenBtn').classList.remove('active');
-        document.getElementById('livePreviewContainer').classList.remove('active');
+    function showFilePreview(text) {
+        document.getElementById('fileName').innerText = text;
+        document.getElementById('filePreview').style.display = 'flex';
     }
 
-    function captureFrameFromStream() {
-        if (!activeStream) return null;
-        const video = document.getElementById('liveVideo');
-        const canvas = document.getElementById('snapshotCanvas');
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL('image/jpeg', 0.85);
+    function clearAttachedFile() {
+        attachedFile = null;
+        document.getElementById('fileInput').value = '';
+        document.getElementById('filePreview').style.display = 'none';
     }
 
     async function sendMessage() {
         const input = document.getElementById('userInput');
         const prompt = input.value.trim();
-        const liveSnapshot = captureFrameFromStream();
-
-        if (!prompt && !attachedFile && !liveSnapshot) return;
+        if (!prompt && !attachedFile) return;
 
         const activeChat = chats.find(c => c.id === currentChatId);
         if (!activeChat) return;
 
         if (activeChat.messages.length <= 1 && prompt) {
-            activeChat.title = prompt.substring(0, 18) + '...';
+            activeChat.title = prompt.substring(0, 20) + '...';
         }
 
         let userContent = prompt;
-        let currentImagePayload = null;
-
-        if (liveSnapshot) {
-            userContent += `<br><img src="${liveSnapshot}" class="preview-img"><br><small>📹 [Знімок з ${activeStreamType === 'camera' ? 'камери' : 'екрана'}]</small>`;
-            currentImagePayload = liveSnapshot;
-        } else if (attachedFile && attachedFile.isImage) {
-            userContent += `<br><img src="${attachedFile.content}" class="preview-img">`;
-            currentImagePayload = attachedFile.content;
-        } else if (attachedFile) {
-            userContent += `<br><i>[Файл: <b>${attachedFile.name}</b>]</i>`;
+        if (attachedFile) {
+            userContent += attachedFile.isImage 
+                ? `<br><img src="${attachedFile.content}" class="preview-img">` 
+                : `<br><i>[Файл: <b>${attachedFile.name}</b>]</i>`;
         }
 
         activeChat.messages.push({ role: 'user', content: userContent });
@@ -379,15 +326,15 @@
         clearAttachedFile();
         saveUserChats();
 
-        const loadingText = "<i>🔍 Обробка...</i>";
+        const loadingText = "<i>🔍 Обробляю запит...</i>";
         activeChat.messages.push({ role: 'ai', content: loadingText });
         const msgId = appendMessageHTML(loadingText, 'ai');
 
         try {
             const provider = localStorage.getItem('api_provider') || 'gemini';
             const responseText = provider === 'gemini' 
-                ? await callGeminiAPI(prompt, currentFile, currentImagePayload) 
-                : await callOllamaAPI(prompt, currentFile, currentImagePayload);
+                ? await callGeminiAPI(prompt, currentFile) 
+                : await callOllamaAPI(prompt, currentFile);
 
             const formatted = formatAIResponse(responseText);
             activeChat.messages[activeChat.messages.length - 1].content = formatted;
@@ -401,23 +348,37 @@
         }
     }
 
-    async function callGeminiAPI(prompt, file, imagePayload) {
+    // Google Gemini API з безпечною передачею Base64 Vision
+    async function callGeminiAPI(prompt, file) {
         const apiKey = localStorage.getItem('gemini_api_key');
-        if (!apiKey) throw new Error("Вкажіть Google Gemini API Key у налаштуваннях (⚙️)!");
+        if (!apiKey) throw new Error("Укажіть безкоштовний Google Gemini API Key у налаштуваннях!");
 
-        const systemPrompt = "Ти AI-асистент. Для коду/файлів використовуй вердикти [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS]. Код виводь у блоки ``` з назвою мови.";
-        let parts = [{ text: systemPrompt + "\n\n" + (prompt || "Проаналізуй прикріплений вміст.") }];
+        let parts = [];
+        let textPart = prompt || "Проаналізуй вміст.";
 
         if (file && !file.isImage) {
-            parts[0].text += `\n\n--- ВМІСТ ФАЙЛУ (${file.name}) ---\n\`\`\`\n${file.content}\n\`\`\``;
+            textPart += `\n\n--- ФАЙЛ (${file.name}) ---\n${file.content}`;
         }
 
-        if (imagePayload) {
-            const base64Data = imagePayload.split(',')[1];
-            parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Data } });
+        parts.push({ text: textPart });
+
+        if (file && file.isImage) {
+            const splitData = file.content.split(',');
+            if (splitData.length > 1) {
+                const base64Data = splitData[1];
+                const mimeType = file.type || 'image/jpeg';
+                parts.push({
+                    inline_data: {
+                        mime_type: mimeType,
+                        data: base64Data
+                    }
+                });
+            }
         }
 
-        const res = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){apiKey}`, {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: parts }] })
@@ -425,18 +386,25 @@
 
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
+
         return data.candidates[0].content.parts[0].text;
     }
 
-    async function callOllamaAPI(prompt, file, imagePayload) {
+    async function callOllamaAPI(prompt, file) {
         const url = localStorage.getItem('ollama_url') || 'http://localhost:11434';
         const model = localStorage.getItem('local_model') || 'llama3.2-vision';
 
         let fullText = prompt || "Проаналізуй вміст.";
         let images = [];
 
-        if (imagePayload) images.push(imagePayload.split(',')[1]);
-        if (file && !file.isImage) fullText += `\n\`\`\`\n${file.content}\n\`\`\``;
+        if (file) {
+            if (file.isImage) {
+                const parts = file.content.split(',');
+                if (parts.length > 1) images.push(parts[1]);
+            } else {
+                fullText += `\n\`\`\`\n${file.content}\n\`\`\``;
+            }
+        }
 
         const res = await fetch(`${url}/api/chat`, {
             method: "POST",
@@ -456,64 +424,31 @@
         let parsed = text;
         if (parsed.includes('[VERDICT: SAFE]')) parsed = parsed.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 БЕЗПЕЧНО</div>');
         if (parsed.includes('[VERDICT: SUSPICIOUS]')) parsed = parsed.replace('[VERDICT: SUSPICIOUS]', '<div class="verdict-card verdict-warning">🟡 ПІДОЗРІЛО</div>');
-        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ВІРУС / ШКІДЛИВИЙ КОД!</div>');
+        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ШКІДЛИВИЙ КОД</div>');
 
         parsed = parsed.replace(/```([a-zA-Z0-9_]*)\n([\s\S]*?)```/g, (m, lang, code) => {
-            const ext = lang || 'txt';
-            const fileName = `script.${ext}`;
-            const blobData = encodeURIComponent(code);
-            return `<pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre><a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">💾 Завантажити ${fileName}</a>`;
+            return `<pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>`;
         });
 
         return parsed.replace(/\n/g, '<br>');
     }
 
-    function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
-    function loadSettings() {
-        document.getElementById('geminiKeyInput').value = localStorage.getItem('gemini_api_key') || '';
-        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'gemini';
-        document.getElementById('ollamaUrlInput').value = localStorage.getItem('ollama_url') || 'http://localhost:11434';
-        document.getElementById('localModelInput').value = localStorage.getItem('local_model') || 'llama3.2-vision';
-        toggleProviderSettings();
-    }
-    function saveSettings() {
-        localStorage.setItem('gemini_api_key', document.getElementById('geminiKeyInput').value.trim());
-        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
-        localStorage.setItem('ollama_url', document.getElementById('ollamaUrlInput').value.trim());
-        localStorage.setItem('local_model', document.getElementById('localModelInput').value.trim());
-        document.getElementById('settingsModal').classList.remove('show');
-    }
-    function toggleProviderSettings() {
-        const provider = document.getElementById('apiProvider').value;
-        document.getElementById('geminiGroup').style.display = provider === 'gemini' ? 'block' : 'none';
-        document.getElementById('ollamaGroup').style.display = provider === 'ollama' ? 'block' : 'none';
-    }
-    function handleFileSelect(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        if (file.type.startsWith('image/')) {
-            reader.readAsDataURL(file);
-            reader.onload = () => { attachedFile = { name: file.name, content: reader.result, isImage: true }; showFilePreview(`🖼️ ${file.name}`); };
-        } else {
-            reader.readAsText(file);
-            reader.onload = () => { attachedFile = { name: file.name, content: reader.result, isImage: false }; showFilePreview(`📄 ${file.name}`); };
-        }
-    }
-    function showFilePreview(t) { document.getElementById('fileName').innerText = t; document.getElementById('filePreview').style.display = 'flex'; }
-    function clearAttachedFile() { attachedFile = null; document.getElementById('fileInput').value = ''; document.getElementById('filePreview').style.display = 'none'; }
-    function appendMessageHTML(c, s) {
+    function appendMessageHTML(content, sender) {
         const id = 'msg_' + Date.now() + Math.random();
         const div = document.createElement('div');
-        div.className = `message ${s}`;
+        div.className = `message ${sender}`;
         div.id = id;
-        div.innerHTML = c;
-        const mc = document.getElementById('messages');
-        mc.appendChild(div);
-        mc.scrollTop = mc.scrollHeight;
+        div.innerHTML = content;
+        const msgContainer = document.getElementById('messages');
+        msgContainer.appendChild(div);
+        msgContainer.scrollTop = msgContainer.scrollHeight;
         return id;
     }
-    function updateMessageHTML(id, c) { const el = document.getElementById(id); if (el) el.innerHTML = c; }
+
+    function updateMessageHTML(id, content) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = content;
+    }
 </script>
 
 </body>
