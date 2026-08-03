@@ -2,35 +2,35 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI | Live Security & Vision Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus AI | Mobile & Desktop Studio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
         body {
-            height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden;
+            height: 100vh; height: 100dvh; display: flex; justify-content: center; align-items: center; overflow: hidden;
             background: linear-gradient(-45deg, #0f172a, #1e293b, #1e1b4b, #0f172a);
             background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: white;
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .app-container {
-            width: 98%; max-width: 1280px; height: 92vh; display: flex;
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px);
+            width: 98%; max-width: 1280px; height: 94vh; height: 94dvh; display: flex;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* Sidebar */
+        /* Sidebar Desktop */
         .sidebar {
             width: 270px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; padding: 15px; gap: 12px;
+            display: flex; flex-direction: column; padding: 15px; gap: 12px; transition: all 0.3s ease;
         }
         .new-chat-btn {
             padding: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); border: none;
             border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
-        .new-chat-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); }
+        .new-chat-btn:active { transform: scale(0.98); }
         .chats-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .chat-item {
             padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,0.05); cursor: pointer;
@@ -39,101 +39,120 @@
         }
         .chat-item:hover, .chat-item.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
         .chat-title-text { overflow: hidden; text-overflow: ellipsis; }
-        .delete-chat-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; }
-        .chat-item:hover .delete-chat-btn { opacity: 1; }
+        .delete-chat-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; }
 
-        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
-        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; margin-top: 2px; display: inline-block; }
+        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.82rem; }
+        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; display: inline-block; margin-top: 2px; }
 
         /* Main Chat Window */
-        .chat-main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .chat-main { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
         .chat-header {
-            padding: 15px 20px; background: rgba(0, 0, 0, 0.2);
+            padding: 12px 16px; background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
-        .live-tools-bar { display: flex; gap: 8px; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .chat-header h3 { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .live-tools-bar { display: flex; gap: 6px; align-items: center; }
+        
+        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
         /* Messages */
-        .message { padding: 14px 18px; border-radius: 18px; max-width: 85%; font-size: 0.95rem; line-height: 1.5; word-break: break-word; }
+        .message { padding: 12px 16px; border-radius: 18px; max-width: 88%; font-size: 0.92rem; line-height: 1.45; word-break: break-word; }
         .user { background: linear-gradient(135deg, #6366f1, #a855f7); align-self: flex-end; color: white; }
         .ai { background: rgba(255, 255, 255, 0.08); align-self: flex-start; border: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; }
 
-        /* Verdict Cards for Security Analysis */
-        .verdict-card { padding: 10px 14px; border-radius: 10px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        /* Security Verdict Cards */
+        .verdict-card { padding: 8px 12px; border-radius: 10px; font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; }
         .verdict-safe { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80; }
         .verdict-warning { background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fde047; }
         .verdict-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; }
 
-        /* File & Image Previews */
-        .preview-img { max-width: 160px; max-height: 160px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
-        pre { background: #090d16; padding: 12px; border-radius: 10px; overflow-x: auto; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        code { font-family: monospace; font-size: 0.85rem; color: #38bdf8; }
-        .download-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; background: #22c55e; color: white; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 0.8rem; border: none; cursor: pointer; }
-        .download-btn:hover { background: #16a34a; }
+        /* Media Elements */
+        .preview-img { max-width: 100%; max-height: 200px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        pre { background: #090d16; padding: 10px; border-radius: 10px; overflow-x: auto; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        code { font-family: monospace; font-size: 0.8rem; color: #38bdf8; }
+        .download-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; background: #22c55e; color: white; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 0.78rem; border: none; cursor: pointer; }
 
-        /* Live Video Streaming Window */
+        /* Live Video Streaming Container */
         .live-preview-container {
-            position: absolute; top: 70px; right: 20px; width: 230px; background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #a855f7; border-radius: 16px; padding: 10px; display: none; flex-direction: column; gap: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 10; backdrop-filter: blur(8px);
+            position: absolute; top: 60px; right: 12px; width: 190px; background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #a855f7; border-radius: 16px; padding: 8px; display: none; flex-direction: column; gap: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 20; backdrop-filter: blur(8px);
         }
         .live-preview-container.active { display: flex; }
-        video { width: 100%; height: 135px; object-fit: cover; border-radius: 10px; background: #000; }
-        .live-status { font-size: 0.75rem; color: #22c55e; display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
+        video { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; background: #000; }
+        .live-status { font-size: 0.7rem; color: #22c55e; display: flex; align-items: center; gap: 4px; font-weight: bold; }
+        .live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Input Controls */
-        .chat-input-area { padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 8px; }
-        .file-attachment-bar { display: flex; gap: 10px; align-items: center; font-size: 0.85rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; }
-        .input-row { display: flex; gap: 8px; }
-        input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 0.95rem; }
+        /* Input Bar */
+        .chat-input-area { padding: 10px 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 6px; }
+        .file-attachment-bar { display: flex; gap: 8px; align-items: center; font-size: 0.8rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; }
+        .input-row { display: flex; gap: 6px; }
+        input[type="text"] { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 0.9rem; }
         
-        .btn { padding: 10px 16px; border: none; border-radius: 12px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; }
-        .btn:hover { background: #4f46e5; }
-        .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
-        .btn-live { background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #e9d5ff; }
+        .btn { padding: 8px 14px; border: none; border-radius: 10px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+        .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; }
+        .btn-live { background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #e9d5ff; padding: 8px 10px; }
         .btn-live.active { background: #a855f7; color: white; }
 
         /* Modal Settings */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); padding: 15px; }
         .modal.show { display: flex; }
-        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 440px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
-        select, input[type="password"], input[type="text"].modal-input { padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.9rem; width: 100%; }
+        .modal-content { background: #1e293b; padding: 20px; border-radius: 20px; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        select, input[type="password"], input[type="text"].modal-input { padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.85rem; width: 100%; }
         a { color: #38bdf8; text-decoration: none; }
+
+        /* 📱 MOBILE RESPONSIVE MEDIA QUERIES */
+        .menu-toggle-btn { display: none; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 6px 10px; font-size: 1rem; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .app-container { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; border: none; }
+            .menu-toggle-btn { display: block; }
+            
+            .sidebar {
+                position: absolute; top: 0; left: -100%; width: 260px; height: 100%; z-index: 30;
+                background: #0f172a; transition: left 0.3s ease; box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+            }
+            .sidebar.open { left: 0; }
+            
+            .live-tools-bar .btn-text { display: none; } /* Ховаємо текст на мобільних, залишаємо іконки */
+            .live-preview-container { width: 160px; top: 55px; right: 8px; }
+            video { height: 95px; }
+            .message { max-width: 92%; }
+        }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="sidebar">
-        <button class="new-chat-btn" onclick="createNewChat()">➕ Новий чат</button>
+    <div class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="new-chat-btn" style="flex: 1;" onclick="createNewChat()">➕ Новий чат</button>
+            <button onclick="toggleSidebar()" style="background: none; border: none; color: white; font-size: 1.2rem; margin-left: 10px; cursor: pointer; display: none;" id="closeSidebarBtn">✕</button>
+        </div>
         <div class="chats-list" id="chatsList"></div>
         <div class="user-profile">
-            <div>
-                <span>📱 Безкоштовний режим</span>
-                <br><span class="badge-device">Збереження локально</span>
-            </div>
+            <span>📱 Мобільний / ПК режим</span>
+            <br><span class="badge-device">Оптимізовано під сенсор</span>
         </div>
     </div>
 
     <div class="chat-main">
         <div class="chat-header">
+            <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
             <h3 id="currentChatTitle">💬 Чат</h3>
             <div class="live-tools-bar">
-                <button class="btn btn-live" id="camBtn" onclick="toggleStream('camera')">📷 Камера</button>
-                <button class="btn btn-live" id="screenBtn" onclick="toggleStream('screen')">🖥️ Екран</button>
-                <button class="btn btn-file" onclick="openSettings()">⚙️ Налаштування</button>
+                <button class="btn btn-live" id="camBtn" onclick="toggleStream('camera')" title="Увімкнути Камеру">📷 <span class="btn-text">Камера</span></button>
+                <button class="btn btn-live" id="screenBtn" onclick="toggleStream('screen')" title="Увімкнути Екран">🖥️ <span class="btn-text">Екран</span></button>
+                <button class="btn btn-file" onclick="openSettings()" title="Налаштування">⚙️</button>
             </div>
         </div>
 
-        <!-- Віконце трансляції в реальному часі -->
         <div class="live-preview-container" id="livePreviewContainer">
             <div class="live-status"><span class="live-dot"></span> <span id="liveStatusText">Трансляція...</span></div>
             <video id="liveVideo" autoplay playsinline muted></video>
-            <button class="btn" style="padding: 6px; font-size: 0.75rem; background: #ef4444;" onclick="stopStream()">⏹ Зупинити потік</button>
+            <button class="btn" style="padding: 4px; font-size: 0.7rem; background: #ef4444;" onclick="stopStream()">⏹ Стоп</button>
         </div>
 
         <div class="chat-messages" id="messages"></div>
@@ -145,41 +164,41 @@
             </div>
             <div class="input-row">
                 <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
-                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити фото чи код">📎</button>
-                <input type="text" id="userInput" placeholder="Запитайте про код, попросіть перевірити файл або запустіть Live Vision..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити файл">📎</button>
+                <input type="text" id="userInput" placeholder="Введіть запит..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button class="btn" onclick="sendMessage()">➔</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Модальне вікно безкоштовних налаштувань -->
+<!-- Модальне вікно -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <h3>⚙️ Безкоштовні Налаштування AI</h3>
+        <h3>⚙️ Налаштування AI</h3>
         
-        <label style="font-size: 0.85rem; color: #a1a1aa;">Провайдер AI:</label>
+        <label style="font-size: 0.8rem; color: #a1a1aa;">Провайдер AI:</label>
         <select id="apiProvider" onchange="toggleProviderSettings()">
-            <option value="gemini">Google Gemini API (Безкоштовно у хмарі)</option>
-            <option value="ollama">Ollama (100% Локально на пристрої)</option>
+            <option value="gemini">Google Gemini API (Безкоштовно)</option>
+            <option value="ollama">Ollama (Локально)</option>
         </select>
 
         <div id="geminiGroup">
-            <label style="font-size: 0.85rem; color: #a1a1aa;">Безкоштовний Google Gemini API Key:</label>
+            <label style="font-size: 0.8rem; color: #a1a1aa;">Google Gemini API Key:</label>
             <input type="password" id="geminiKeyInput" placeholder="AIzaSy...">
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
-                🔑 Отримати ключ безкоштовно та без картки: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+            <p style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">
+                🔑 Отримати: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
             </p>
         </div>
 
         <div id="ollamaGroup" style="display: none;">
-            <label style="font-size: 0.85rem; color: #a1a1aa;">Ollama URL (Локальний сервер):</label>
+            <label style="font-size: 0.8rem; color: #a1a1aa;">Ollama URL:</label>
             <input type="text" class="modal-input" id="ollamaUrlInput" value="http://localhost:11434">
-            <label style="font-size: 0.85rem; color: #a1a1aa; margin-top: 6px;">Модель Vision:</label>
-            <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision" placeholder="llama3.2-vision або qwen2.5-coder">
+            <label style="font-size: 0.8rem; color: #a1a1aa; margin-top: 4px;">Модель Vision:</label>
+            <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision">
         </div>
 
-        <button class="btn" style="margin-top: 10px;" onclick="saveSettings()">Зберегти</button>
+        <button class="btn" style="margin-top: 8px;" onclick="saveSettings()">Зберегти</button>
     </div>
 </div>
 
@@ -190,12 +209,24 @@
     let currentChatId = null;
     let attachedFile = null;
     let activeStream = null;
-    let activeStreamType = null; // 'camera' або 'screen'
+    let activeStreamType = null;
 
     window.onload = () => {
         loadSettings();
         loadUserChats();
+        checkMobileUI();
     };
+
+    function checkMobileUI() {
+        if (window.innerWidth <= 768) {
+            document.getElementById('closeSidebarBtn').style.display = 'block';
+        }
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('open');
+    }
 
     function loadUserChats() {
         const savedChats = localStorage.getItem('nexus_chats_free_full');
@@ -215,18 +246,20 @@
             title: 'Новий чат',
             messages: [{ 
                 role: 'ai', 
-                content: 'Привіт! Я підтримую **генерацію коду**, **аналіз безпеки файлів**, **Vision фотографій** та **Live Vision** в реальному часі.<br><br>💡 *Натисніть 🖥️ **Екран** або 📷 **Камера** у верхній панелі, щоб активувати відеопотік!*' 
+                content: 'Привіт! Я працюю і на ПК, і на смартфонах 📱.<br><br>Ви можете надсилати фото, аналізувати код або вмикати ** Live Vision** через 📷 / 🖥️.' 
             }]
         };
         chats.unshift(newChat);
         saveUserChats();
         selectChat(newChat.id);
+        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
 
     function selectChat(chatId) {
         currentChatId = chatId;
         renderChatsList();
         renderMessages();
+        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
 
     function deleteChat(chatId, event) {
@@ -257,7 +290,7 @@
         chat.messages.forEach(msg => appendMessageHTML(msg.content, msg.role));
     }
 
-    /* 🎥 LIVE VISION (ТРАНСЛЯЦІЯ ЕКРАНА / КАМЕРИ) */
+    /* 🎥 LIVE STREAMING */
     async function toggleStream(type) {
         if (activeStreamType === type) {
             stopStream();
@@ -268,7 +301,7 @@
 
         try {
             if (type === 'camera') {
-                activeStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 document.getElementById('camBtn').classList.add('active');
                 document.getElementById('liveStatusText').innerText = 'Камера активна';
             } else if (type === 'screen') {
@@ -311,7 +344,6 @@
         return canvas.toDataURL('image/jpeg', 0.85);
     }
 
-    /* ВІДПРАВКА ПОВІДОМЛЕННЯ */
     async function sendMessage() {
         const input = document.getElementById('userInput');
         const prompt = input.value.trim();
@@ -323,7 +355,7 @@
         if (!activeChat) return;
 
         if (activeChat.messages.length <= 1 && prompt) {
-            activeChat.title = prompt.substring(0, 22) + '...';
+            activeChat.title = prompt.substring(0, 18) + '...';
         }
 
         let userContent = prompt;
@@ -347,7 +379,7 @@
         clearAttachedFile();
         saveUserChats();
 
-        const loadingText = "<i>🔍 Обробляю запит / Аналізую вміст...</i>";
+        const loadingText = "<i>🔍 Обробка...</i>";
         activeChat.messages.push({ role: 'ai', content: loadingText });
         const msgId = appendMessageHTML(loadingText, 'ai');
 
@@ -369,14 +401,12 @@
         }
     }
 
-    /* GOOGLE GEMINI API (БЕЗКОШТОВНО) */
     async function callGeminiAPI(prompt, file, imagePayload) {
         const apiKey = localStorage.getItem('gemini_api_key');
-        if (!apiKey) throw new Error("Будь ласка, вкажіть безкоштовний Google Gemini API Key у налаштуваннях!");
+        if (!apiKey) throw new Error("Вкажіть Google Gemini API Key у налаштуваннях (⚙️)!");
 
-        const systemPrompt = "Ти спеціалізований AI-асистент з підтримкою Live Vision, аналізу безпеки та генерації коду. Якщо аналізуєш код чи файл — ОБОВ'ЯЗКОВО почни з вердикту: [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS]. Якщо створюєш або виправляєш код — оформлюй його у блоки ``` з назвою мови.";
-
-        let parts = [{ text: systemPrompt + "\n\n" + (prompt || "Проаналізуй прикріплений зображення/вміст.") }];
+        const systemPrompt = "Ти AI-асистент. Для коду/файлів використовуй вердикти [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS]. Код виводь у блоки ``` з назвою мови.";
+        let parts = [{ text: systemPrompt + "\n\n" + (prompt || "Проаналізуй прикріплений вміст.") }];
 
         if (file && !file.isImage) {
             parts[0].text += `\n\n--- ВМІСТ ФАЙЛУ (${file.name}) ---\n\`\`\`\n${file.content}\n\`\`\``;
@@ -384,9 +414,7 @@
 
         if (imagePayload) {
             const base64Data = imagePayload.split(',')[1];
-            parts.push({
-                inline_data: { mime_type: "image/jpeg", data: base64Data }
-            });
+            parts.push({ inline_data: { mime_type: "image/jpeg", data: base64Data } });
         }
 
         const res = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){apiKey}`, {
@@ -400,12 +428,11 @@
         return data.candidates[0].content.parts[0].text;
     }
 
-    /* OLLAMA API (ЛОКАЛЬНО) */
     async function callOllamaAPI(prompt, file, imagePayload) {
         const url = localStorage.getItem('ollama_url') || 'http://localhost:11434';
         const model = localStorage.getItem('local_model') || 'llama3.2-vision';
 
-        let fullText = prompt || "Проаналізуй зображення.";
+        let fullText = prompt || "Проаналізуй вміст.";
         let images = [];
 
         if (imagePayload) images.push(imagePayload.split(',')[1]);
@@ -416,7 +443,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 model: model,
-                messages: [{ role: "system", content: "Проаналізуй вміст. Використовуй [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS] для аналізу файлів." }, { role: "user", content: fullText, images: images.length > 0 ? images : undefined }],
+                messages: [{ role: "user", content: fullText, images: images.length > 0 ? images : undefined }],
                 stream: false
             })
         });
@@ -425,27 +452,22 @@
         return data.message.content;
     }
 
-    /* ФОРМАТУВАННЯ ВІДПОВІДІ (ВЕРДИКТИ + СКАЧУВАННЯ КОДУ) */
     function formatAIResponse(text) {
         let parsed = text;
-        if (parsed.includes('[VERDICT: SAFE]')) parsed = parsed.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 БЕЗПЕЧНО: Шкідливого коду не виявлено</div>');
-        if (parsed.includes('[VERDICT: SUSPICIOUS]')) parsed = parsed.replace('[VERDICT: SUSPICIOUS]', '<div class="verdict-card verdict-warning">🟡 ПІДОЗРІЛО: Виявлено потенційно небезпечні інструкції</div>');
-        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ШКІДЛИВИЙ КОД / ВІРУС!</div>');
+        if (parsed.includes('[VERDICT: SAFE]')) parsed = parsed.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 БЕЗПЕЧНО</div>');
+        if (parsed.includes('[VERDICT: SUSPICIOUS]')) parsed = parsed.replace('[VERDICT: SUSPICIOUS]', '<div class="verdict-card verdict-warning">🟡 ПІДОЗРІЛО</div>');
+        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ВІРУС / ШКІДЛИВИЙ КОД!</div>');
 
         parsed = parsed.replace(/```([a-zA-Z0-9_]*)\n([\s\S]*?)```/g, (m, lang, code) => {
             const ext = lang || 'txt';
             const fileName = `script.${ext}`;
             const blobData = encodeURIComponent(code);
-            return `
-                <pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
-                <a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">💾 Завантажити ${fileName}</a>
-            `;
+            return `<pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre><a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">💾 Завантажити ${fileName}</a>`;
         });
 
         return parsed.replace(/\n/g, '<br>');
     }
 
-    /* ДОПОМІЖНІ ФУНКЦІЇ */
     function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
     function loadSettings() {
         document.getElementById('geminiKeyInput').value = localStorage.getItem('gemini_api_key') || '';
