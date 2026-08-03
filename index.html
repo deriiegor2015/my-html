@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI | Hybrid Platform</title>
+    <title>Nexus AI | Live Security & Vision Studio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
         body {
@@ -13,9 +13,8 @@
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Main App Layout */
         .app-container {
-            width: 98%; max-width: 1200px; height: 92vh; display: flex;
+            width: 98%; max-width: 1280px; height: 92vh; display: flex;
             background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
@@ -23,86 +22,118 @@
 
         /* Sidebar */
         .sidebar {
-            width: 260px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; padding: 15px; gap: 15px;
+            width: 270px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; padding: 15px; gap: 12px;
         }
         .new-chat-btn {
             padding: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); border: none;
             border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .new-chat-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); }
         .chats-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .chat-item {
             padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,0.05); cursor: pointer;
             font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid transparent; transition: all 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
         }
         .chat-item:hover, .chat-item.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
-        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .chat-title-text { overflow: hidden; text-overflow: ellipsis; }
+        .delete-chat-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; }
+        .chat-item:hover .delete-chat-btn { opacity: 1; }
 
-        /* Main Chat Area */
-        .chat-main { flex: 1; display: flex; flex-direction: column; }
+        .user-profile { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
+        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; margin-top: 2px; display: inline-block; }
+
+        /* Main Chat Window */
+        .chat-main { flex: 1; display: flex; flex-direction: column; position: relative; }
         .chat-header {
             padding: 15px 20px; background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex; justify-content: space-between; align-items: center;
         }
+        .live-tools-bar { display: flex; gap: 8px; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
-        /* Messages Elements */
+        /* Messages */
         .message { padding: 14px 18px; border-radius: 18px; max-width: 85%; font-size: 0.95rem; line-height: 1.5; word-break: break-word; }
         .user { background: linear-gradient(135deg, #6366f1, #a855f7); align-self: flex-end; color: white; }
         .ai { background: rgba(255, 255, 255, 0.08); align-self: flex-start; border: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; }
 
+        /* Verdict Cards for Security Analysis */
         .verdict-card { padding: 10px 14px; border-radius: 10px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
         .verdict-safe { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80; }
         .verdict-warning { background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fde047; }
         .verdict-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; }
 
-        .preview-img { max-width: 140px; max-height: 140px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
-        .generated-video { width: 100%; max-width: 450px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.2); }
-
+        /* File & Image Previews */
+        .preview-img { max-width: 160px; max-height: 160px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
         pre { background: #090d16; padding: 12px; border-radius: 10px; overflow-x: auto; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); }
         code { font-family: monospace; font-size: 0.85rem; color: #38bdf8; }
         .download-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; background: #22c55e; color: white; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 0.8rem; border: none; cursor: pointer; }
+        .download-btn:hover { background: #16a34a; }
+
+        /* Live Video Streaming Window */
+        .live-preview-container {
+            position: absolute; top: 70px; right: 20px; width: 230px; background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #a855f7; border-radius: 16px; padding: 10px; display: none; flex-direction: column; gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 10; backdrop-filter: blur(8px);
+        }
+        .live-preview-container.active { display: flex; }
+        video { width: 100%; height: 135px; object-fit: cover; border-radius: 10px; background: #000; }
+        .live-status { font-size: 0.75rem; color: #22c55e; display: flex; align-items: center; gap: 6px; font-weight: bold; }
+        .live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         /* Input Controls */
         .chat-input-area { padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 8px; }
         .file-attachment-bar { display: flex; gap: 10px; align-items: center; font-size: 0.85rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; }
-        .input-row { display: flex; gap: 10px; }
+        .input-row { display: flex; gap: 8px; }
         input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 0.95rem; }
         
-        .btn { padding: 10px 18px; border: none; border-radius: 12px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; }
+        .btn { padding: 10px 16px; border: none; border-radius: 12px; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; }
+        .btn:hover { background: #4f46e5; }
         .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-live { background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #e9d5ff; }
+        .btn-live.active { background: #a855f7; color: white; }
 
-        /* Modals */
+        /* Modal Settings */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal.show { display: flex; }
-        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 440px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
         select, input[type="password"], input[type="text"].modal-input { padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.9rem; width: 100%; }
-        
-        .badge-device { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; }
+        a { color: #38bdf8; text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <!-- Sidebar -->
     <div class="sidebar">
         <button class="new-chat-btn" onclick="createNewChat()">➕ Новий чат</button>
         <div class="chats-list" id="chatsList"></div>
         <div class="user-profile">
             <div>
-                <span id="displayUser">📱 Гостьовий режим</span>
-                <br><span class="badge-device" id="storageNotice">Збережено на пристрої</span>
+                <span>📱 Безкоштовний режим</span>
+                <br><span class="badge-device">Збереження локально</span>
             </div>
-            <button class="btn btn-file" style="padding: 6px 10px; font-size:0.75rem;" id="authActionBtn" onclick="openAuthModal()">Вхід</button>
         </div>
     </div>
 
-    <!-- Main Chat Window -->
     <div class="chat-main">
         <div class="chat-header">
             <h3 id="currentChatTitle">💬 Чат</h3>
-            <button class="btn btn-file" onclick="openSettings()">⚙️ Налаштування</button>
+            <div class="live-tools-bar">
+                <button class="btn btn-live" id="camBtn" onclick="toggleStream('camera')">📷 Камера</button>
+                <button class="btn btn-live" id="screenBtn" onclick="toggleStream('screen')">🖥️ Екран</button>
+                <button class="btn btn-file" onclick="openSettings()">⚙️ Налаштування</button>
+            </div>
+        </div>
+
+        <!-- Віконце трансляції в реальному часі -->
+        <div class="live-preview-container" id="livePreviewContainer">
+            <div class="live-status"><span class="live-dot"></span> <span id="liveStatusText">Трансляція...</span></div>
+            <video id="liveVideo" autoplay playsinline muted></video>
+            <button class="btn" style="padding: 6px; font-size: 0.75rem; background: #ef4444;" onclick="stopStream()">⏹ Зупинити потік</button>
         </div>
 
         <div class="chat-messages" id="messages"></div>
@@ -114,125 +145,67 @@
             </div>
             <div class="input-row">
                 <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
-                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити файл">📎</button>
-                <input type="text" id="userInput" placeholder="Напишіть запит або 'Згенеруй відео неонове місто'..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити фото чи код">📎</button>
+                <input type="text" id="userInput" placeholder="Запитайте про код, попросіть перевірити файл або запустіть Live Vision..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button class="btn" onclick="sendMessage()">➔</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Модальне вікно авторизації -->
-<div id="authModal" class="modal">
-    <div class="modal-content">
-        <h3 id="authTitle">Увійти в акаунт</h3>
-        <p style="font-size: 0.8rem; color: #a1a1aa;">Увійдіть, щоб ізолювати чати від гостьового сеансу.</p>
-        <form onsubmit="handleAuth(event)" style="display:flex; flex-direction:column; gap:10px;">
-            <input type="text" id="authUsername" class="modal-input" placeholder="Логін" required>
-            <input type="password" id="authPassword" class="modal-input" placeholder="Пароль" required>
-            <button type="submit" class="btn" id="authBtn">Увійти</button>
-        </form>
-        <button class="btn btn-file" onclick="closeAuthModal()">Закрити</button>
-    </div>
-</div>
-
-<!-- Модальне вікно налаштувань -->
+<!-- Модальне вікно безкоштовних налаштувань -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <h3>⚙️ Налаштування API</h3>
+        <h3>⚙️ Безкоштовні Налаштування AI</h3>
         
-        <label style="font-size: 0.85rem; color: #a1a1aa;">AI Провайдер:</label>
+        <label style="font-size: 0.85rem; color: #a1a1aa;">Провайдер AI:</label>
         <select id="apiProvider" onchange="toggleProviderSettings()">
-            <option value="openrouter">OpenRouter (Хмара)</option>
-            <option value="ollama">Ollama (Локально)</option>
+            <option value="gemini">Google Gemini API (Безкоштовно у хмарі)</option>
+            <option value="ollama">Ollama (100% Локально на пристрої)</option>
         </select>
 
-        <div id="openrouterGroup">
-            <label style="font-size: 0.85rem; color: #a1a1aa;">OpenRouter API Key:</label>
-            <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
+        <div id="geminiGroup">
+            <label style="font-size: 0.85rem; color: #a1a1aa;">Безкоштовний Google Gemini API Key:</label>
+            <input type="password" id="geminiKeyInput" placeholder="AIzaSy...">
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+                🔑 Отримати ключ безкоштовно та без картки: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+            </p>
         </div>
 
         <div id="ollamaGroup" style="display: none;">
-            <label style="font-size: 0.85rem; color: #a1a1aa;">Ollama URL:</label>
+            <label style="font-size: 0.85rem; color: #a1a1aa;">Ollama URL (Локальний сервер):</label>
             <input type="text" class="modal-input" id="ollamaUrlInput" value="http://localhost:11434">
+            <label style="font-size: 0.85rem; color: #a1a1aa; margin-top: 6px;">Модель Vision:</label>
+            <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision" placeholder="llama3.2-vision або qwen2.5-coder">
         </div>
-
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
-
-        <label style="font-size: 0.85rem; color: #a1a1aa;">Replicate API Key (Відео):</label>
-        <input type="password" id="replicateKeyInput" placeholder="r8_...">
 
         <button class="btn" style="margin-top: 10px;" onclick="saveSettings()">Зберегти</button>
     </div>
 </div>
 
+<canvas id="snapshotCanvas" style="display: none;"></canvas>
+
 <script>
-    let currentUser = localStorage.getItem('nexus_current_user') || null;
     let chats = [];
     let currentChatId = null;
     let attachedFile = null;
+    let activeStream = null;
+    let activeStreamType = null; // 'camera' або 'screen'
 
     window.onload = () => {
-        updateUserStatus();
         loadSettings();
         loadUserChats();
     };
 
-    // --- Управління статусом користувача ---
-    function updateUserStatus() {
-        if (currentUser) {
-            document.getElementById('displayUser').innerText = `👤 ${currentUser}`;
-            document.getElementById('storageNotice').innerText = 'Акаунт (Локально)';
-            document.getElementById('authActionBtn').innerText = 'Вийти';
-            document.getElementById('authActionBtn').onclick = logout;
-        } else {
-            document.getElementById('displayUser').innerText = '📱 Гостевий режим';
-            document.getElementById('storageNotice').innerText = 'Збережено на пристрої';
-            document.getElementById('authActionBtn').innerText = 'Вхід';
-            document.getElementById('authActionBtn').onclick = openAuthModal;
-        }
-    }
-
-    function openAuthModal() { document.getElementById('authModal').classList.add('show'); }
-    function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
-
-    function handleAuth(e) {
-        e.preventDefault();
-        const username = document.getElementById('authUsername').value.trim();
-        if (!username) return;
-
-        currentUser = username;
-        localStorage.setItem('nexus_current_user', currentUser);
-        updateUserStatus();
-        closeAuthModal();
-        loadUserChats();
-    }
-
-    function logout() {
-        localStorage.removeItem('nexus_current_user');
-        currentUser = null;
-        updateUserStatus();
-        loadUserChats();
-    }
-
-    // --- Управління чатами (Збереження у localStorage) ---
-    function getStorageKey() {
-        return currentUser ? `nexus_chats_user_${currentUser}` : 'nexus_chats_guest';
-    }
-
     function loadUserChats() {
-        const savedChats = localStorage.getItem(getStorageKey());
+        const savedChats = localStorage.getItem('nexus_chats_free_full');
         chats = savedChats ? JSON.parse(savedChats) : [];
-        
-        if (chats.length === 0) {
-            createNewChat();
-        } else {
-            selectChat(chats[0].id);
-        }
+        if (chats.length === 0) createNewChat();
+        else selectChat(chats[0].id);
     }
 
     function saveUserChats() {
-        localStorage.setItem(getStorageKey(), JSON.stringify(chats));
+        localStorage.setItem('nexus_chats_free_full', JSON.stringify(chats));
         renderChatsList();
     }
 
@@ -240,7 +213,10 @@
         const newChat = {
             id: 'chat_' + Date.now(),
             title: 'Новий чат',
-            messages: [{ role: 'ai', content: 'Привіт! Чат готовий до роботи. Всі дані зберігаються на цьому пристрої.' }]
+            messages: [{ 
+                role: 'ai', 
+                content: 'Привіт! Я підтримую **генерацію коду**, **аналіз безпеки файлів**, **Vision фотографій** та **Live Vision** в реальному часі.<br><br>💡 *Натисніть 🖥️ **Екран** або 📷 **Камера** у верхній панелі, щоб активувати відеопотік!*' 
+            }]
         };
         chats.unshift(newChat);
         saveUserChats();
@@ -253,13 +229,20 @@
         renderMessages();
     }
 
+    function deleteChat(chatId, event) {
+        event.stopPropagation();
+        chats = chats.filter(c => c.id !== chatId);
+        if (chats.length === 0) createNewChat();
+        else { saveUserChats(); selectChat(chats[0].id); }
+    }
+
     function renderChatsList() {
         const listEl = document.getElementById('chatsList');
         listEl.innerHTML = '';
         chats.forEach(chat => {
             const item = document.createElement('div');
             item.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
-            item.innerText = chat.title;
+            item.innerHTML = `<span class="chat-title-text">${chat.title}</span><button class="delete-chat-btn" onclick="deleteChat('${chat.id}', event)">🗑️</button>`;
             item.onclick = () => selectChat(chat.id);
             listEl.appendChild(item);
         });
@@ -268,92 +251,92 @@
     function renderMessages() {
         const chat = chats.find(c => c.id === currentChatId);
         if (!chat) return;
-
         document.getElementById('currentChatTitle').innerText = `💬 ${chat.title}`;
         const msgContainer = document.getElementById('messages');
         msgContainer.innerHTML = '';
-
-        chat.messages.forEach(msg => {
-            appendMessageHTML(msg.content, msg.role);
-        });
+        chat.messages.forEach(msg => appendMessageHTML(msg.content, msg.role));
     }
 
-    // --- Налаштування ---
-    function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
-    function loadSettings() {
-        document.getElementById('apiKeyInput').value = localStorage.getItem('api_key') || '';
-        document.getElementById('replicateKeyInput').value = localStorage.getItem('replicate_key') || '';
-        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'openrouter';
-        document.getElementById('ollamaUrlInput').value = localStorage.getItem('ollama_url') || 'http://localhost:11434';
-        toggleProviderSettings();
-    }
+    /* 🎥 LIVE VISION (ТРАНСЛЯЦІЯ ЕКРАНА / КАМЕРИ) */
+    async function toggleStream(type) {
+        if (activeStreamType === type) {
+            stopStream();
+            return;
+        }
 
-    function saveSettings() {
-        localStorage.setItem('api_key', document.getElementById('apiKeyInput').value.trim());
-        localStorage.setItem('replicate_key', document.getElementById('replicateKeyInput').value.trim());
-        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
-        localStorage.setItem('ollama_url', document.getElementById('ollamaUrlInput').value.trim());
-        document.getElementById('settingsModal').classList.remove('show');
-    }
+        stopStream();
 
-    function toggleProviderSettings() {
-        const provider = document.getElementById('apiProvider').value;
-        document.getElementById('openrouterGroup').style.display = provider === 'openrouter' ? 'block' : 'none';
-        document.getElementById('ollamaGroup').style.display = provider === 'ollama' ? 'block' : 'none';
-    }
+        try {
+            if (type === 'camera') {
+                activeStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                document.getElementById('camBtn').classList.add('active');
+                document.getElementById('liveStatusText').innerText = 'Камера активна';
+            } else if (type === 'screen') {
+                activeStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                document.getElementById('screenBtn').classList.add('active');
+                document.getElementById('liveStatusText').innerText = 'Екран активний';
+            }
 
-    // --- Обробка файлів ---
-    function handleFileSelect(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+            activeStreamType = type;
+            const videoEl = document.getElementById('liveVideo');
+            videoEl.srcObject = activeStream;
+            document.getElementById('livePreviewContainer').classList.add('active');
 
-        const reader = new FileReader();
-        const isImage = file.type.startsWith('image/');
-
-        if (isImage) {
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                attachedFile = { name: file.name, type: file.type, content: reader.result, isImage: true };
-                showFilePreview(`🖼️ ${file.name}`);
-            };
-        } else {
-            reader.readAsText(file);
-            reader.onload = () => {
-                attachedFile = { name: file.name, type: file.type, content: reader.result, isImage: false };
-                showFilePreview(`📄 ${file.name}`);
-            };
+            activeStream.getVideoTracks()[0].onended = () => stopStream();
+        } catch (err) {
+            alert("Помилка доступу до відео: " + err.message);
+            stopStream();
         }
     }
 
-    function showFilePreview(text) {
-        document.getElementById('fileName').innerText = text;
-        document.getElementById('filePreview').style.display = 'flex';
+    function stopStream() {
+        if (activeStream) {
+            activeStream.getTracks().forEach(track => track.stop());
+            activeStream = null;
+        }
+        activeStreamType = null;
+        document.getElementById('camBtn').classList.remove('active');
+        document.getElementById('screenBtn').classList.remove('active');
+        document.getElementById('livePreviewContainer').classList.remove('active');
     }
 
-    function clearAttachedFile() {
-        attachedFile = null;
-        document.getElementById('fileInput').value = '';
-        document.getElementById('filePreview').style.display = 'none';
+    function captureFrameFromStream() {
+        if (!activeStream) return null;
+        const video = document.getElementById('liveVideo');
+        const canvas = document.getElementById('snapshotCanvas');
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.85);
     }
 
-    // --- Чат та API ---
+    /* ВІДПРАВКА ПОВІДОМЛЕННЯ */
     async function sendMessage() {
         const input = document.getElementById('userInput');
         const prompt = input.value.trim();
-        if (!prompt && !attachedFile) return;
+        const liveSnapshot = captureFrameFromStream();
+
+        if (!prompt && !attachedFile && !liveSnapshot) return;
 
         const activeChat = chats.find(c => c.id === currentChatId);
         if (!activeChat) return;
 
         if (activeChat.messages.length <= 1 && prompt) {
-            activeChat.title = prompt.substring(0, 20) + '...';
+            activeChat.title = prompt.substring(0, 22) + '...';
         }
 
         let userContent = prompt;
-        if (attachedFile) {
-            userContent += attachedFile.isImage 
-                ? `<br><img src="${attachedFile.content}" class="preview-img">` 
-                : `<br><i>[Файл: <b>${attachedFile.name}</b>]</i>`;
+        let currentImagePayload = null;
+
+        if (liveSnapshot) {
+            userContent += `<br><img src="${liveSnapshot}" class="preview-img"><br><small>📹 [Знімок з ${activeStreamType === 'camera' ? 'камери' : 'екрана'}]</small>`;
+            currentImagePayload = liveSnapshot;
+        } else if (attachedFile && attachedFile.isImage) {
+            userContent += `<br><img src="${attachedFile.content}" class="preview-img">`;
+            currentImagePayload = attachedFile.content;
+        } else if (attachedFile) {
+            userContent += `<br><i>[Файл: <b>${attachedFile.name}</b>]</i>`;
         }
 
         activeChat.messages.push({ role: 'user', content: userContent });
@@ -364,40 +347,15 @@
         clearAttachedFile();
         saveUserChats();
 
-        const isVideoReq = prompt.toLowerCase().startsWith('згенеруй відео') || prompt.toLowerCase().includes('generate video');
-
-        if (isVideoReq) {
-            const videoPrompt = prompt.replace(/згенеруй відео:?/i, '').replace(/generate video:?/i, '').trim();
-            const loadingMsg = "🎬 <i>Генерую відео через Replicate... Зачекайте хвилину...</i>";
-            
-            activeChat.messages.push({ role: 'ai', content: loadingMsg });
-            const msgId = appendMessageHTML(loadingMsg, 'ai');
-
-            try {
-                const videoUrl = await generateVideoAPI(videoPrompt);
-                const finalHTML = `✨ <b>Відео згенеровано!</b><br><video class="generated-video" controls autoplay loop muted src="${videoUrl}"></video><br><a class="download-btn" href="${videoUrl}" target="_blank" download="video.mp4">💾 Завантажити MP4</a>`;
-                
-                activeChat.messages[activeChat.messages.length - 1].content = finalHTML;
-                updateMessageHTML(msgId, finalHTML);
-                saveUserChats();
-            } catch (err) {
-                const errHTML = `❌ Помилка відео: ${err.message}`;
-                activeChat.messages[activeChat.messages.length - 1].content = errHTML;
-                updateMessageHTML(msgId, errHTML);
-                saveUserChats();
-            }
-            return;
-        }
-
-        const loadingText = "<i>🔍 Обробляю запит...</i>";
+        const loadingText = "<i>🔍 Обробляю запит / Аналізую вміст...</i>";
         activeChat.messages.push({ role: 'ai', content: loadingText });
         const msgId = appendMessageHTML(loadingText, 'ai');
 
         try {
-            const provider = localStorage.getItem('api_provider') || 'openrouter';
-            const responseText = provider === 'openrouter' 
-                ? await callOpenRouter(prompt, currentFile) 
-                : await callOllama(prompt, currentFile);
+            const provider = localStorage.getItem('api_provider') || 'gemini';
+            const responseText = provider === 'gemini' 
+                ? await callGeminiAPI(prompt, currentFile, currentImagePayload) 
+                : await callOllamaAPI(prompt, currentFile, currentImagePayload);
 
             const formatted = formatAIResponse(responseText);
             activeChat.messages[activeChat.messages.length - 1].content = formatted;
@@ -411,104 +369,129 @@
         }
     }
 
-    async function generateVideoAPI(prompt) {
-        const token = localStorage.getItem('replicate_key');
-        if (!token) throw new Error("Укажіть Replicate API Key у налаштуваннях!");
+    /* GOOGLE GEMINI API (БЕЗКОШТОВНО) */
+    async function callGeminiAPI(prompt, file, imagePayload) {
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) throw new Error("Будь ласка, вкажіть безкоштовний Google Gemini API Key у налаштуваннях!");
 
-        const res = await fetch("https://api.replicate.com/v1/predictions", {
-            method: "POST",
-            headers: { "Authorization": `Token ${token}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-                version: "9f747673945c62801b13b84701c783929c0eed21e42dd46d7ec0db0afe781c21",
-                input: { prompt }
-            })
-        });
+        const systemPrompt = "Ти спеціалізований AI-асистент з підтримкою Live Vision, аналізу безпеки та генерації коду. Якщо аналізуєш код чи файл — ОБОВ'ЯЗКОВО почни з вердикту: [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS]. Якщо створюєш або виправляєш код — оформлюй його у блоки ``` з назвою мови.";
 
-        let prediction = await res.json();
-        if (prediction.error) throw new Error(prediction.error);
+        let parts = [{ text: systemPrompt + "\n\n" + (prompt || "Проаналізуй прикріплений зображення/вміст.") }];
 
-        while (prediction.status !== 'succeeded' && prediction.status !== 'failed') {
-            await new Promise(r => setTimeout(r, 3000));
-            const check = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
-                headers: { "Authorization": `Token ${token}` }
-            });
-            prediction = await check.json();
+        if (file && !file.isImage) {
+            parts[0].text += `\n\n--- ВМІСТ ФАЙЛУ (${file.name}) ---\n\`\`\`\n${file.content}\n\`\`\``;
         }
 
-        if (prediction.status === 'failed') throw new Error("Генерація не вдалася.");
-        return Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
-    }
+        if (imagePayload) {
+            const base64Data = imagePayload.split(',')[1];
+            parts.push({
+                inline_data: { mime_type: "image/jpeg", data: base64Data }
+            });
+        }
 
-    async function callOpenRouter(prompt, file) {
-        const apiKey = localStorage.getItem('api_key');
-        if (!apiKey) throw new Error("Укажіть OpenRouter API Key!");
-
-        let text = prompt || "Проаналізуй вміст.";
-        if (file && !file.isImage) text += `\n\n\`\`\`\n${file.content}\n\`\`\``;
-
-        let payload = [{ type: "text", text: text }];
-        if (file && file.isImage) payload.push({ type: "image_url", image_url: { url: file.content } });
-
-        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        const res = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){apiKey}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-            body: JSON.stringify({
-                model: "google/gemini-2.5-flash",
-                messages: [{ role: "system", content: "Ти асистент з безпеки та аналізу коду. Додавай [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS] якщо аналізуєш код/файл." }, { role: "user", content: payload }]
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: parts }] })
         });
+
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
-        return data.choices[0].message.content;
+        return data.candidates[0].content.parts[0].text;
     }
 
-    async function callOllama(prompt, file) {
+    /* OLLAMA API (ЛОКАЛЬНО) */
+    async function callOllamaAPI(prompt, file, imagePayload) {
         const url = localStorage.getItem('ollama_url') || 'http://localhost:11434';
-        let text = prompt || "Проаналізуй.";
-        if (file && !file.isImage) text += `\n\`\`\`\n${file.content}\n\`\`\``;
+        const model = localStorage.getItem('local_model') || 'llama3.2-vision';
+
+        let fullText = prompt || "Проаналізуй зображення.";
+        let images = [];
+
+        if (imagePayload) images.push(imagePayload.split(',')[1]);
+        if (file && !file.isImage) fullText += `\n\`\`\`\n${file.content}\n\`\`\``;
 
         const res = await fetch(`${url}/api/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                model: "llama3.2-vision",
-                messages: [{ role: "user", content: text }],
+                model: model,
+                messages: [{ role: "system", content: "Проаналізуй вміст. Використовуй [VERDICT: SAFE], [VERDICT: SUSPICIOUS] або [VERDICT: MALICIOUS] для аналізу файлів." }, { role: "user", content: fullText, images: images.length > 0 ? images : undefined }],
                 stream: false
             })
         });
+
         const data = await res.json();
         return data.message.content;
     }
 
+    /* ФОРМАТУВАННЯ ВІДПОВІДІ (ВЕРДИКТИ + СКАЧУВАННЯ КОДУ) */
     function formatAIResponse(text) {
         let parsed = text;
-        if (parsed.includes('[VERDICT: SAFE]')) parsed = parsed.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 БЕЗПЕЧНО</div>');
-        if (parsed.includes('[VERDICT: SUSPICIOUS]')) parsed = parsed.replace('[VERDICT: SUSPICIOUS]', '<div class="verdict-card verdict-warning">🟡 ПІДОЗРІЛО</div>');
-        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ШКІДЛИВИЙ КОД</div>');
+        if (parsed.includes('[VERDICT: SAFE]')) parsed = parsed.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 БЕЗПЕЧНО: Шкідливого коду не виявлено</div>');
+        if (parsed.includes('[VERDICT: SUSPICIOUS]')) parsed = parsed.replace('[VERDICT: SUSPICIOUS]', '<div class="verdict-card verdict-warning">🟡 ПІДОЗРІЛО: Виявлено потенційно небезпечні інструкції</div>');
+        if (parsed.includes('[VERDICT: MALICIOUS]')) parsed = parsed.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ШКІДЛИВИЙ КОД / ВІРУС!</div>');
 
         parsed = parsed.replace(/```([a-zA-Z0-9_]*)\n([\s\S]*?)```/g, (m, lang, code) => {
-            return `<pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>`;
+            const ext = lang || 'txt';
+            const fileName = `script.${ext}`;
+            const blobData = encodeURIComponent(code);
+            return `
+                <pre><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+                <a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">💾 Завантажити ${fileName}</a>
+            `;
         });
 
         return parsed.replace(/\n/g, '<br>');
     }
 
-    function appendMessageHTML(content, sender) {
+    /* ДОПОМІЖНІ ФУНКЦІЇ */
+    function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
+    function loadSettings() {
+        document.getElementById('geminiKeyInput').value = localStorage.getItem('gemini_api_key') || '';
+        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'gemini';
+        document.getElementById('ollamaUrlInput').value = localStorage.getItem('ollama_url') || 'http://localhost:11434';
+        document.getElementById('localModelInput').value = localStorage.getItem('local_model') || 'llama3.2-vision';
+        toggleProviderSettings();
+    }
+    function saveSettings() {
+        localStorage.setItem('gemini_api_key', document.getElementById('geminiKeyInput').value.trim());
+        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
+        localStorage.setItem('ollama_url', document.getElementById('ollamaUrlInput').value.trim());
+        localStorage.setItem('local_model', document.getElementById('localModelInput').value.trim());
+        document.getElementById('settingsModal').classList.remove('show');
+    }
+    function toggleProviderSettings() {
+        const provider = document.getElementById('apiProvider').value;
+        document.getElementById('geminiGroup').style.display = provider === 'gemini' ? 'block' : 'none';
+        document.getElementById('ollamaGroup').style.display = provider === 'ollama' ? 'block' : 'none';
+    }
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        if (file.type.startsWith('image/')) {
+            reader.readAsDataURL(file);
+            reader.onload = () => { attachedFile = { name: file.name, content: reader.result, isImage: true }; showFilePreview(`🖼️ ${file.name}`); };
+        } else {
+            reader.readAsText(file);
+            reader.onload = () => { attachedFile = { name: file.name, content: reader.result, isImage: false }; showFilePreview(`📄 ${file.name}`); };
+        }
+    }
+    function showFilePreview(t) { document.getElementById('fileName').innerText = t; document.getElementById('filePreview').style.display = 'flex'; }
+    function clearAttachedFile() { attachedFile = null; document.getElementById('fileInput').value = ''; document.getElementById('filePreview').style.display = 'none'; }
+    function appendMessageHTML(c, s) {
         const id = 'msg_' + Date.now() + Math.random();
         const div = document.createElement('div');
-        div.className = `message ${sender}`;
+        div.className = `message ${s}`;
         div.id = id;
-        div.innerHTML = content;
-        const msgContainer = document.getElementById('messages');
-        msgContainer.appendChild(div);
-        msgContainer.scrollTop = msgContainer.scrollHeight;
+        div.innerHTML = c;
+        const mc = document.getElementById('messages');
+        mc.appendChild(div);
+        mc.scrollTop = mc.scrollHeight;
         return id;
     }
-
-    function updateMessageHTML(id, content) {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = content;
-    }
+    function updateMessageHTML(id, c) { const el = document.getElementById(id); if (el) el.innerHTML = c; }
 </script>
 
 </body>
