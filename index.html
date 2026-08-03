@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI | Security & Vision Interface</title>
+    <title>Nexus AI | Security, Vision & Video Engine</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
         body {
@@ -14,7 +14,7 @@
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .chat-container {
-            width: 95%; max-width: 650px; height: 90vh;
+            width: 95%; max-width: 680px; height: 90vh;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex; flex-direction: column; overflow: hidden;
@@ -33,7 +33,7 @@
         .user { background: linear-gradient(135deg, #6366f1, #a855f7); align-self: flex-end; color: white; }
         .ai { background: rgba(255, 255, 255, 0.08); align-self: flex-start; border: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; }
 
-        /* Security Analysis Verdict Cards */
+        /* Security Cards */
         .verdict-card {
             padding: 12px 16px; border-radius: 12px; font-weight: bold; margin-bottom: 10px;
             display: flex; align-items: center; gap: 10px; font-size: 0.95rem;
@@ -42,16 +42,17 @@
         .verdict-warning { background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fde047; }
         .verdict-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; }
 
-        /* Media and Attachments */
+        /* Media */
         .preview-img { max-width: 140px; max-height: 140px; border-radius: 10px; object-fit: cover; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        .generated-video { width: 100%; max-width: 480px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 
-        /* Code Generation Display & Download */
+        /* Code Blocks & Buttons */
         pre { background: #090d16; padding: 14px; border-radius: 12px; overflow-x: auto; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #38bdf8; }
+        code { font-family: monospace; font-size: 0.85rem; color: #38bdf8; }
         .download-btn {
             display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px;
             background: linear-gradient(135deg, #22c55e, #16a34a); color: white; font-weight: 600;
-            border-radius: 8px; text-decoration: none; font-size: 0.82rem; transition: transform 0.2s;
+            border-radius: 8px; text-decoration: none; font-size: 0.82rem; cursor: pointer; border: none; transition: transform 0.2s;
         }
         .download-btn:hover { transform: translateY(-2px); }
 
@@ -72,10 +73,10 @@
         .btn:hover { opacity: 0.9; }
         .btn-file { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* Settings Modal */
+        /* Modal Settings */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal.show { display: flex; }
-        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-content { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 440px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(255,255,255,0.1); }
         select, input[type="password"], input[type="text"].modal-input { padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: white; font-size: 0.9rem; width: 100%; }
     </style>
 </head>
@@ -83,16 +84,16 @@
 
 <div class="chat-container">
     <div class="chat-header">
-        <h2>🛡️ Nexus AI | Cyber Security & Code</h2>
+        <h2>🛡️ Nexus AI | Security, Vision & Video</h2>
         <button class="btn btn-file" onclick="openSettings()">⚙️ Налаштування</button>
     </div>
 
     <div class="chat-messages" id="messages">
         <div class="message ai">
-            Привіт! Я захищений AI-асистент. 
-            <br>🔍 <b>Перевірка на віруси:</b> Передайте код або файл, щоб перевірити його на шкідливий код, трояни чи бекдори.
-            <br>🖼️ <b>Аналіз фото:</b> Надсилайте зображення для розпізнавання.
-            <br>💻 <b>Генератор коду:</b> Створюйте файли та завантажуйте їх в один клік.
+            Привіт! Я ваш багатофункціональний асистент.
+            <br>🎥 <b>Генерація відео:</b> Напишіть <i>"Згенеруй відео: [ваше бачення]"</i>.
+            <br>🔍 <b>Перевірка на віруси:</b> Прикріпіть файл або код для перевірки на трояни, бекдори та загрози.
+            <br>🖼️ <b>Аналіз фото & Генератор файлів.</b>
         </div>
     </div>
 
@@ -103,8 +104,8 @@
         </div>
         <div class="input-row">
             <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
-            <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити файл, код або фото">📎</button>
-            <input type="text" id="userInput" placeholder="Проаналізуй цей файл на віруси або постав запитання..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button class="btn btn-file" onclick="document.getElementById('fileInput').click()" title="Прикріпити файл або фото">📎</button>
+            <input type="text" id="userInput" placeholder="Введіть запит або 'Згенеруй відео неонового міста'..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button class="btn" onclick="sendMessage()">➔</button>
         </div>
     </div>
@@ -113,27 +114,32 @@
 <!-- Modal Settings -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <h3>⚙️ Налаштування Провайдера AI</h3>
+        <h3>⚙️ Налаштування Ключів та Моделей</h3>
         
-        <label style="font-size: 0.85rem; color: #a1a1aa;">Режим обробки:</label>
+        <label style="font-size: 0.85rem; color: #a1a1aa;">Основний AI провайдер:</label>
         <select id="apiProvider" onchange="toggleProviderSettings()">
-            <option value="openrouter">OpenRouter (Хмара / Глибокий аналіз)</option>
-            <option value="ollama">Ollama (100% Локальний режим)</option>
+            <option value="openrouter">OpenRouter (Хмара / Аналіз + Безпека)</option>
+            <option value="ollama">Ollama (100% Локально)</option>
         </select>
 
         <div id="openrouterGroup">
             <label style="font-size: 0.85rem; color: #a1a1aa;">OpenRouter API Key:</label>
             <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
             <label style="font-size: 0.85rem; color: #a1a1aa;">Модель:</label>
-            <input type="text" class="modal-input" id="cloudModelInput" value="google/gemini-2.5-flash" placeholder="google/gemini-2.5-flash">
+            <input type="text" class="modal-input" id="cloudModelInput" value="google/gemini-2.5-flash">
         </div>
 
         <div id="ollamaGroup" style="display: none;">
-            <label style="font-size: 0.85rem; color: #a1a1aa;">URL локального сервера Ollama:</label>
+            <label style="font-size: 0.85rem; color: #a1a1aa;">Ollama URL:</label>
             <input type="text" class="modal-input" id="ollamaUrlInput" value="http://localhost:11434">
             <label style="font-size: 0.85rem; color: #a1a1aa;">Локальна модель:</label>
-            <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision" placeholder="llama3.2-vision або qwen2.5-coder">
+            <input type="text" class="modal-input" id="localModelInput" value="llama3.2-vision">
         </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
+
+        <label style="font-size: 0.85rem; color: #a1a1aa;">Replicate API Key (Для генерації відео):</label>
+        <input type="password" id="replicateKeyInput" placeholder="r8_...">
 
         <button class="btn" style="margin-top: 10px;" onclick="saveSettings()">Зберегти та закрити</button>
     </div>
@@ -144,8 +150,9 @@
 
     window.onload = () => {
         document.getElementById('apiKeyInput').value = localStorage.getItem('api_key') || '';
-        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'openrouter';
         document.getElementById('cloudModelInput').value = localStorage.getItem('cloud_model') || 'google/gemini-2.5-flash';
+        document.getElementById('replicateKeyInput').value = localStorage.getItem('replicate_key') || '';
+        document.getElementById('apiProvider').value = localStorage.getItem('api_provider') || 'openrouter';
         document.getElementById('ollamaUrlInput').value = localStorage.getItem('ollama_url') || 'http://localhost:11434';
         document.getElementById('localModelInput').value = localStorage.getItem('local_model') || 'llama3.2-vision';
         toggleProviderSettings();
@@ -154,8 +161,9 @@
     function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
     function saveSettings() {
         localStorage.setItem('api_key', document.getElementById('apiKeyInput').value.trim());
-        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
         localStorage.setItem('cloud_model', document.getElementById('cloudModelInput').value.trim());
+        localStorage.setItem('replicate_key', document.getElementById('replicateKeyInput').value.trim());
+        localStorage.setItem('api_provider', document.getElementById('apiProvider').value);
         localStorage.setItem('ollama_url', document.getElementById('ollamaUrlInput').value.trim());
         localStorage.setItem('local_model', document.getElementById('localModelInput').value.trim());
         document.getElementById('settingsModal').classList.remove('show');
@@ -167,7 +175,6 @@
         document.getElementById('ollamaGroup').style.display = provider === 'ollama' ? 'block' : 'none';
     }
 
-    // Обробка вибору файлів
     function handleFileSelect(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -185,7 +192,7 @@
             reader.readAsText(file);
             reader.onload = () => {
                 attachedFile = { name: file.name, type: file.type, content: reader.result, isImage: false };
-                showFilePreview(`📄 Файл/Скрипт: ${file.name}`);
+                showFilePreview(`📄 Файл/Код: ${file.name}`);
             };
         }
     }
@@ -201,7 +208,6 @@
         document.getElementById('filePreview').style.display = 'none';
     }
 
-    // Відправка запиту
     async function sendMessage() {
         const textInput = document.getElementById('userInput');
         const prompt = textInput.value.trim();
@@ -212,7 +218,7 @@
             if (attachedFile.isImage) {
                 userHTML += `<br><img src="${attachedFile.content}" class="preview-img">`;
             } else {
-                userHTML += `<br><i>[Передано файл для аналізу: <b>${attachedFile.name}</b>]</i>`;
+                userHTML += `<br><i>[Файл прикріплено: <b>${attachedFile.name}</b>]</i>`;
             }
         }
         appendMessage(userHTML, 'user');
@@ -221,72 +227,98 @@
         const currentFile = attachedFile;
         clearAttachedFile();
 
-        const loadingId = appendMessage("<i>🔍 Сканую на віруси, аналізую та обробляю запит...</i>", 'ai');
+        // 🎥 Перевірка чи це запит на відео
+        const isVideoReq = prompt.toLowerCase().startsWith('згенеруй відео') || prompt.toLowerCase().includes('generate video');
 
+        if (isVideoReq) {
+            const videoPrompt = prompt.replace(/згенеруй відео:?/i, '').replace(/generate video:?/i, '').trim();
+            const loadingId = appendMessage("🎬 <i>Надсилаю запит у нейромережу... Створюю кадр та відеопотік (може зайняти до 1-2 хв)...</i>", 'ai');
+            
+            try {
+                const videoUrl = await generateVideoDirect(videoPrompt);
+                updateMessage(loadingId, `
+                    ✨ <b>Відео успішно згенеровано!</b><br>
+                    <video class="generated-video" controls autoplay loop muted src="${videoUrl}"></video><br>
+                    <a class="download-btn" href="${videoUrl}" target="_blank" download="ai_video.mp4">💾 Завантажити MP4</a>
+                `);
+            } catch (err) {
+                updateMessage(loadingId, `❌ Помилка генерації відео: ${err.message}`);
+            }
+            return;
+        }
+
+        // 🛡️ Звичайна обробка коду/тексту/вірусів
+        const loadingId = appendMessage("<i>🔍 Обробляю запит та сканую вміст...</i>", 'ai');
         try {
             const provider = localStorage.getItem('api_provider') || 'openrouter';
-            let responseText = "";
-
-            if (provider === 'openrouter') {
-                responseText = await callOpenRouter(prompt, currentFile);
-            } else {
-                responseText = await callOllama(prompt, currentFile);
-            }
-
+            let responseText = provider === 'openrouter' ? await callOpenRouter(prompt, currentFile) : await callOllama(prompt, currentFile);
             updateMessage(loadingId, formatAIResponse(responseText));
         } catch (err) {
-            updateMessage(loadingId, `❌ Помилка обробки: ${err.message}`);
+            updateMessage(loadingId, `❌ Помилка: ${err.message}`);
         }
     }
 
-    // Системні інструкції для безпекового аналізу
+    // Direct Browser Request to Replicate for Video Generation
+    async function generateVideoDirect(prompt) {
+        const token = localStorage.getItem('replicate_key');
+        if (!token) throw new Error("Будь ласка, вкажіть Replicate API Key у Налаштуваннях!");
+
+        // 1. Створення задачі генерації
+        const response = await fetch("https://api.replicate.com/v1/predictions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                version: "9f747673945c62801b13b84701c783929c0eed21e42dd46d7ec0db0afe781c21", // ZeroScope Video model
+                input: { prompt: prompt }
+            })
+        });
+
+        let prediction = await response.json();
+        if (prediction.error) throw new Error(prediction.error);
+
+        // 2. Очікування рендерингу (Polling)
+        while (prediction.status !== 'succeeded' && prediction.status !== 'failed') {
+            await new Promise(r => setTimeout(r, 3000));
+            const checkRes = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+                headers: { "Authorization": `Token ${token}` }
+            });
+            prediction = await checkRes.json();
+        }
+
+        if (prediction.status === 'failed') throw new Error("Генерація відео завершилась помилкою.");
+        return Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    }
+
     const SYSTEM_SECURITY_PROMPT = `
 Ти — висококласний фахівець з Кібербезпеки та Аналізу Шкідливого ПЗ (Malware Analyst).
-Твоє завдання:
-1. Якщо тобі надають код, файл або інструкції, ТИ ПОВИНЕН проаналізувати їх на наявність загроз, вірусів, бекдорів, reverse shell, keyloggers, obfuscation, небажаних мережевих запитів або шкідливих функцій.
-2. ОБОВ'ЯЗКОВО на самому початку відповіді вкажи один із трьох вердиктів у такому точному форматі:
-   - [VERDICT: SAFE] - якщо код/файл повністю безпечний.
-   - [VERDICT: SUSPICIOUS] - якщо є потенційно небезпечні або підозрілі фрагменти (наприклад, виклики eval, невідомі запити).
-   - [VERDICT: MALICIOUS] - якщо це 100% вірус, бекдор, троян чи шкідливе ПЗ.
-3. Після вердикту розпиши детальний аналіз: які функції викликають загрозу, які рядки підозрілі та порадь, як це виправити або нейтралізувати.
-4. Якщо користувач просить створити новий код або файл — згенеруй його у відповідному блоці коду.
-Відповідай чітко, структуровано та українською мовою.
+1. Проаналізуй будь-який наданий код/файл на наявність загроз, вірусів, бекдорів, reverse shell, keyloggers, obfuscation.
+2. ОБОВ'ЯЗКОВО на початку відповіді вкажи один із вердиктів:
+   - [VERDICT: SAFE] - якщо код безпечний.
+   - [VERDICT: SUSPICIOUS] - якщо є підозрілі фрагменти.
+   - [VERDICT: MALICIOUS] - якщо це вірус або шкідливе ПЗ.
+3. Поясни причини вердикту та як виправити проблему. Відповідай українською мовою.
 `;
 
-    // OpenRouter API
     async function callOpenRouter(prompt, file) {
         const apiKey = localStorage.getItem('api_key');
         const model = localStorage.getItem('cloud_model') || 'google/gemini-2.5-flash';
-        if (!apiKey) throw new Error("Будь ласка, вкажіть OpenRouter API Key у налаштуваннях!");
+        if (!apiKey) throw new Error("Укажіть OpenRouter API Key в налаштуваннях!");
 
-        let contentPayload = [];
-        let fullPrompt = prompt || "Проаналізуй прикріплений вміст на безпеку та наявність шкідливого коду.";
-        
-        if (file && !file.isImage) {
-            fullPrompt += `\n\n--- ВМІСТ ФАЙЛУ ЗАХИЩЕНОГО ДЛЯ АНАЛІЗУ (${file.name}) ---\n\`\`\`\n${file.content}\n\`\`\``;
-        }
+        let fullPrompt = prompt || "Проаналізуй вміст на безпеку.";
+        if (file && !file.isImage) fullPrompt += `\n\n\`\`\`\n${file.content}\n\`\`\``;
 
-        contentPayload.push({ type: "text", text: fullPrompt });
-
-        if (file && file.isImage) {
-            contentPayload.push({
-                type: "image_url",
-                image_url: { url: file.content }
-            });
-        }
+        let contentPayload = [{ type: "text", text: fullPrompt }];
+        if (file && file.isImage) contentPayload.push({ type: "image_url", image_url: { url: file.content } });
 
         const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
             body: JSON.stringify({
                 model: model,
-                messages: [
-                    { role: "system", content: SYSTEM_SECURITY_PROMPT },
-                    { role: "user", content: contentPayload }
-                ]
+                messages: [{ role: "system", content: SYSTEM_SECURITY_PROMPT }, { role: "user", content: contentPayload }]
             })
         });
 
@@ -295,21 +327,16 @@
         return data.choices[0].message.content;
     }
 
-    // Local Ollama API
     async function callOllama(prompt, file) {
         const url = localStorage.getItem('ollama_url') || 'http://localhost:11434';
         const model = localStorage.getItem('local_model') || 'llama3.2-vision';
 
-        let fullPrompt = prompt || "Проаналізуй переданий вміст на віруси та безпеку.";
+        let fullPrompt = prompt || "Проаналізуй файл.";
         let images = [];
 
         if (file) {
-            if (file.isImage) {
-                const base64Data = file.content.split(',')[1];
-                images.push(base64Data);
-            } else {
-                fullPrompt += `\n\nАналіз коду файлу (${file.name}):\n\`\`\`\n${file.content}\n\`\`\``;
-            }
+            if (file.isImage) images.push(file.content.split(',')[1]);
+            else fullPrompt += `\n\`\`\`\n${file.content}\n\`\`\``;
         }
 
         const res = await fetch(`${url}/api/chat`, {
@@ -317,10 +344,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 model: model,
-                messages: [
-                    { role: "system", content: SYSTEM_SECURITY_PROMPT },
-                    { role: "user", content: fullPrompt, images: images.length > 0 ? images : undefined }
-                ],
+                messages: [{ role: "system", content: SYSTEM_SECURITY_PROMPT }, { role: "user", content: fullPrompt, images: images.length > 0 ? images : undefined }],
                 stream: false
             })
         });
@@ -329,11 +353,9 @@
         return data.message.content;
     }
 
-    // Форматування відповідей + Відмальовування вердиктів безпеки та кнопок скачування
     function formatAIResponse(text) {
         let parsedText = text;
 
-        // Вставка красивої панелі вердикту кібербезпеки
         if (parsedText.includes('[VERDICT: SAFE]')) {
             parsedText = parsedText.replace('[VERDICT: SAFE]', '<div class="verdict-card verdict-safe">🟢 ВЕРДИКТ БЕЗПЕКИ: Файл / Код БЕЗПЕЧНИЙ</div>');
         } else if (parsedText.includes('[VERDICT: SUSPICIOUS]')) {
@@ -342,19 +364,12 @@
             parsedText = parsedText.replace('[VERDICT: MALICIOUS]', '<div class="verdict-card verdict-danger">🔴 ВЕРДИКТ БЕЗПЕКИ: ВИЯВЛЕНО ШКІДЛИВИЙ КОД / ВІРУС!</div>');
         }
 
-        // Парсинг блоків коду та створення кнопок завантаження
         const codeBlockRegex = /```([a-zA-Z0-9_]*)\n([\s\S]*?)```/g;
         parsedText = parsedText.replace(codeBlockRegex, (match, lang, code) => {
             const ext = lang || 'txt';
             const fileName = `generated_code.${ext}`;
             const blobData = encodeURIComponent(code);
-            
-            return `
-                <pre><code>${escapeHtml(code)}</code></pre>
-                <a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">
-                    💾 Завантажити ${fileName}
-                </a>
-            `;
+            return `<pre><code>${escapeHtml(code)}</code></pre><a class="download-btn" href="data:text/plain;charset=utf-8,${blobData}" download="${fileName}">💾 Завантажити ${fileName}</a>`;
         });
 
         return parsedText.replace(/\n/g, '<br>');
